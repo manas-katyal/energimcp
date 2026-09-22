@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EnergiMCP · Your AI now reads the grid</title>
+<meta name="description" content="EnergiMCP is a read-only MCP server that connects Denmark's energy data — electricity prices, carbon intensity, consumption, production and gas — to Claude, ChatGPT or any MCP client. 100 datasets from Energinet. No API key.">
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+<meta name="theme-color" content="#f5f2ec">
+<meta property="og:site_name" content="EnergiMCP">
+<meta property="og:type" content="website">
+<meta property="og:title" content="EnergiMCP · Your AI now reads the grid">
+<meta property="og:description" content="Denmark's energy data — prices, carbon intensity, consumption, production, gas — in Claude, ChatGPT or any MCP client. Read-only, no API key.">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #f5f2ec; --bg-card: #faf8f4; --ink: #1a1a1a; --dim: #6a6a66; --muted: #a0a09a; --faint: #b5b0aa;
+    --border: #e0ddd6; --border-strong: #c5c2bb; --accent: #c45a2d; --ok: #3d7a4f; --radius: 10px;
+  }
+  html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+  body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.6; }
+  .container { max-width: 880px; margin: 0 auto; padding: 0 1.5rem; }
+  @media (min-width: 768px) { .container { padding: 0 2rem; } }
+  code, .mono { font-family: 'JetBrains Mono', monospace; }
+
+  header { border-bottom: 1px solid var(--border); padding: 1.5rem 0; }
+  header .container { display: flex; justify-content: space-between; align-items: center; }
+  .logo { font-size: 1rem; font-weight: 500; letter-spacing: -0.02em; text-decoration: none; color: var(--ink); display: flex; align-items: center; gap: 0.6rem; }
+  .logo .mark { width: 22px; height: 22px; border-radius: 6px; background: var(--ink); color: var(--bg); display: grid; place-items: center; font-size: 0.7rem; font-weight: 600; }
+  nav { display: flex; gap: 1.5rem; }
+  nav a { font-size: 0.85rem; color: var(--dim); text-decoration: none; transition: color 0.2s; }
+  nav a:hover { color: var(--ink); }
+  @media (max-width: 520px) { nav a:not(:last-child) { display: none; } }
+
+  .hero { padding: 5rem 0 4rem; }
+  @media (min-width: 768px) { .hero { padding: 7rem 0 5rem; } }
+  .hero h1 { font-size: clamp(2.4rem, 6vw, 4.2rem); font-weight: 400; letter-spacing: -0.04em; line-height: 1.05; margin-bottom: 1.5rem; }
+  .subtitle { font-size: clamp(1rem, 1.4vw, 1.2rem); color: var(--dim); max-width: 580px; margin-bottom: 2.5rem; line-height: 1.6; font-weight: 300; }
+  .cta-row { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+  .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.7rem 1.5rem; border-radius: 999px; font-size: 0.85rem; font-weight: 500; text-decoration: none; transition: all 0.2s; }
+  .btn-primary { background: var(--ink); color: #f5f5f3; } .btn-primary:hover { background: #000; }
+  .btn-secondary { background: transparent; color: var(--ink); border: 1px solid var(--border-strong); } .btn-secondary:hover { border-color: var(--ink); }
+  .proof { margin-top: 1.75rem; font-size: 0.82rem; color: var(--muted); font-weight: 300; }
+  .proof strong { color: var(--ink); font-weight: 500; letter-spacing: -0.02em; }
+
+  .chat { margin: 3.5rem 0 0; background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 1.5rem; }
+  .chat .who { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0; color: var(--muted); margin: 0 0 0.35rem; }
+  .chat .who.r { text-align: right; }
+  .msg { max-width: 82%; padding: 0.7rem 1rem; border-radius: 12px; font-size: 0.92rem; line-height: 1.5; margin-bottom: 0.9rem; }
+  .me { margin-left: auto; background: var(--ink); color: #f5f5f3; border-bottom-right-radius: 4px; }
+  .ai { background: var(--bg); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
+  .ai b { font-weight: 500; font-variant-numeric: tabular-nums; }
+  .tool { font-size: 0.68rem; color: var(--muted); margin: -0.4rem 0 0.9rem 0.25rem; }
+  .tool code { font-size: 0.66rem; color: var(--dim); }
+  .tool .dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); margin-right: 0.45rem; vertical-align: middle; }
+
+  section { padding: 4.5rem 0; border-top: 1px solid var(--border); }
+  @media (min-width: 768px) { section { padding: 5.5rem 0; } }
+  .eyebrow { font-size: 0.65rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0; color: var(--muted); margin-bottom: 1.5rem; }
+  h2 { font-size: clamp(1.5rem, 2.8vw, 2.2rem); font-weight: 400; letter-spacing: -0.03em; line-height: 1.15; max-width: 700px; margin-bottom: 1rem; }
+  .section-subtitle { font-size: 0.95rem; color: var(--dim); max-width: 580px; font-weight: 300; line-height: 1.6; }
+
+  .steps { display: grid; grid-template-columns: 1fr; gap: 1rem; margin-top: 2.5rem; }
+  @media (min-width: 768px) { .steps { grid-template-columns: 1fr 1fr 1fr; } }
+  .step { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; }
+  .step .n { font-size: 0.65rem; color: var(--accent); font-weight: 500; margin-bottom: 0.9rem; }
+  .step h3 { font-size: 0.9rem; font-weight: 500; margin-bottom: 0.5rem; letter-spacing: -0.01em; }
+  .step p { font-size: 0.82rem; color: var(--dim); font-weight: 300; line-height: 1.55; }
+  .step code { font-size: 0.74rem; color: var(--ink); }
+
+  .asks { list-style: none; display: grid; grid-template-columns: 1fr; gap: 0.75rem; margin-top: 2.5rem; }
+  @media (min-width: 640px) { .asks { grid-template-columns: 1fr 1fr; } }
+  .asks li { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.25rem; font-size: 0.92rem; font-weight: 300; }
+  .asks li::before { content: "\201C"; color: var(--faint); } .asks li::after { content: "\201D"; color: var(--faint); }
+
+  .facts { display: grid; grid-template-columns: 1fr; gap: 2rem 3rem; margin-top: 2.5rem; }
+  @media (min-width: 640px) { .facts { grid-template-columns: 1fr 1fr; } }
+  .fact h3 { font-size: 0.9rem; font-weight: 500; margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.6rem; letter-spacing: -0.01em; }
+  .fact h3::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--ok); flex: none; }
+  .fact p { font-size: 0.85rem; color: var(--dim); font-weight: 300; line-height: 1.55; }
+  .fact code { font-size: 0.78rem; color: var(--ink); }
+
+  .artifact { margin-top: 1.25rem; background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 1.5rem; }
+  .artifact .head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1.25rem; gap: 1rem; }
+  .artifact .head h4 { font-size: 0.95rem; font-weight: 500; letter-spacing: -0.01em; }
+  .artifact .head span { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0; color: var(--muted); }
+  .tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin-bottom: 1.5rem; }
+  .tile { border: 1px solid var(--border); border-radius: var(--radius); padding: 0.9rem 1rem; }
+  .tile .l { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0; color: var(--muted); margin-bottom: 0.3rem; }
+  .tile .v { font-size: 1.25rem; font-weight: 400; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+  .tile .d { font-size: 0.68rem; color: var(--dim); font-weight: 300; margin-top: 0.15rem; }
+  .bars { display: grid; grid-template-columns: 8.5rem 1fr 5rem; gap: 0.55rem 0.9rem; align-items: center; font-size: 0.8rem; }
+  .bars .k { color: var(--dim); font-weight: 300; }
+  .bars .b { height: 8px; border-radius: 0 4px 4px 0; background: var(--ink); }
+  .bars .b.low { background: var(--ok); } .bars .b.high { background: var(--accent); }
+  .bars .v { text-align: right; font-variant-numeric: tabular-nums; font-size: 0.78rem; }
+  .artifact .note { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--border); font-size: 0.75rem; color: var(--muted); font-weight: 300; }
+  @media (max-width: 640px) {
+    .tiles { grid-template-columns: 1fr; gap: 0.5rem; }
+    .tile { padding: 0.75rem 0.9rem; } .tile .v { font-size: 1.1rem; }
+    .artifact, .chat { padding: 1rem; } .msg { max-width: 92%; }
+    .bars { grid-template-columns: 6.5rem 1fr 4.5rem; }
+  }
+
+  .faq { margin-top: 2.5rem; max-width: 680px; }
+  .faq .q { border-top: 1px solid var(--border); padding: 1.25rem 0; }
+  .faq .q:last-child { border-bottom: 1px solid var(--border); }
+  .faq h3 { font-size: 0.95rem; font-weight: 500; letter-spacing: -0.01em; margin-bottom: 0.4rem; }
+  .faq p { font-size: 0.88rem; color: var(--dim); font-weight: 300; line-height: 1.6; }
+  .faq code { font-size: 0.8rem; color: var(--ink); }
+  .faq a, .fact a, .section-subtitle a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--border-strong); }
+  .fine { font-size: 0.82rem; color: var(--dim); font-weight: 300; line-height: 1.65; max-width: 680px; }
+  .fine p + p { margin-top: 0.85rem; } .fine strong { color: var(--ink); font-weight: 500; }
+
+  pre.cmd { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.25rem; margin-top: 1.5rem; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; line-height: 1.7; color: var(--ink); }
+  pre.cmd .c { color: var(--muted); }
+
+  footer { padding: 3rem 0; border-top: 1px solid var(--border); }
+  footer .container { display: flex; flex-direction: column; gap: 1rem; align-items: center; }
+  @media (min-width: 640px) { footer .container { flex-direction: row; justify-content: space-between; } }
+  footer p { font-size: 0.75rem; color: var(--muted); }
+  footer nav { gap: 1.25rem; } footer a { font-size: 0.75rem; color: var(--dim); text-decoration: none; } footer a:hover { color: var(--ink); }
+</style>
+</head>
+<body>
+<header>
+  <div class="container">
+    <a class="logo" href="/"><span class="mark">E</span>EnergiMCP</a>
+    <nav>
+      <a href="#start">Get started</a>
+      <a href="#data">Data</a>
+      <a href="#questions">Questions</a>
+      <a href="https://github.com/noskillish/energimcp">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="container">
+    <h1>Your AI now reads the grid.</h1>
+    <p class="subtitle">EnergiMCP connects Denmark's energy data to Claude, ChatGPT or any MCP client. Electricity prices, carbon intensity, consumption, production and gas — 100 datasets from Energinet. Read-only, no API key, on a server you run.</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="#start">Get started &rarr;</a>
+      <a class="btn btn-secondary" href="https://github.com/noskillish/energimcp">View the code</a>
+    </div>
+    <p class="proof"><strong>Standard MCP</strong> &middot; Claude, ChatGPT, Cursor or a local model &middot; <strong>100 datasets</strong> from Energi Data Service &middot; <strong>No API key</strong> &middot; <strong>MIT</strong></p>
+
+    <div class="chat">
+      <p class="who r">You</p>
+      <div class="msg me">When should I run the dishwasher today?</div>
+      <p class="who">Assistant</p>
+      <p class="tool"><span class="dot"></span><code>get_electricity_prices</code> &middot; DK2 &middot; today &middot; 96 periods</p>
+      <div class="msg ai">Wait until the afternoon. The cheapest quarter-hour is <b>14:15</b> at <b>0.91 kr/kWh</b>; the morning peak at 07:15 is <b>2.96 kr/kWh</b>, more than three times as much. Average across the day is 1.43 kr/kWh.</div>
+      <p class="who r">You</p>
+      <div class="msg me">Is that also the greenest time?</div>
+      <p class="who">Assistant</p>
+      <p class="tool"><span class="dot"></span><code>get_carbon_intensity</code> &middot; DK2 &middot; with forecast</p>
+      <div class="msg ai">Close enough. Carbon intensity is <b>128 g CO&#8322;/kWh</b> right now and the forecast bottoms out in the same afternoon window — solar is carrying the middle of the day, which is exactly why the price falls then.</div>
+
+      <div class="artifact">
+        <div class="head"><h4>DK2 &middot; day-ahead, 23 September 2026</h4><span>Spot price, excl. tariffs and VAT</span></div>
+        <div class="tiles">
+          <div class="tile"><div class="l">Cheapest</div><div class="v">0.91 kr</div><div class="d">14:15 &middot; per kWh</div></div>
+          <div class="tile"><div class="l">Average</div><div class="v">1.43 kr</div><div class="d">across 96 periods</div></div>
+          <div class="tile"><div class="l">Peak</div><div class="v">2.96 kr</div><div class="d">07:15 &middot; per kWh</div></div>
+        </div>
+        <div class="bars">
+          <div class="k">14:15 cheapest</div><div><div class="b low" style="width:31%"></div></div><div class="v">0.91 kr</div>
+          <div class="k">Day average</div><div><div class="b" style="width:48%"></div></div><div class="v">1.43 kr</div>
+          <div class="k">07:15 peak</div><div><div class="b high" style="width:100%"></div></div><div class="v">2.96 kr</div>
+        </div>
+        <p class="note">Real values read from the Day-Ahead Prices dataset. Spot price only — tariffs, taxes and VAT roughly double what a household pays, and grid tariffs are themselves time-of-day dependent.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main>
+<section id="start">
+  <div class="container">
+    <div class="eyebrow">Three steps</div>
+    <h2>No account. No key. No form.</h2>
+    <p class="section-subtitle">Energi Data Service is open public data, so there is nothing to register for. Add the server to your client and start asking. It runs on your machine over stdio, or as one container if you want it on claude.ai and your phone.</p>
+    <div class="steps">
+      <div class="step"><div class="n">01</div><h3>Run it</h3><p>With Node 24 or later: <code>npx -y energimcp</code> from your MCP client's configuration. Nothing to configure.</p></div>
+      <div class="step"><div class="n">02</div><h3>Ask</h3><p>Say <code>what is electricity costing in DK1 today?</code> or <code>find me the dataset for hourly consumption per municipality</code>.</p></div>
+      <div class="step"><div class="n">03</div><h3>Go deeper</h3><p>Seven tools: search the catalogue, read a dataset's schema, query any of the 100, or build a download link for a bulk extract.</p></div>
+    </div>
+    <pre class="cmd"><span class="c"># claude_desktop_config.json, or .mcp.json in your project</span>
+{
+  "mcpServers": {
+    "energi": { "command": "npx", "args": ["-y", "energimcp"] }
+  }
+}</pre>
+  </div>
+</section>
+
+<section id="asks">
+  <div class="container">
+    <div class="eyebrow">What people ask it</div>
+    <h2>Questions that used to need a spreadsheet.</h2>
+    <ul class="asks">
+      <li>When is power cheapest tomorrow in DK1?</li>
+      <li>How much of the grid is wind right now?</li>
+      <li>What was the carbon intensity when I charged the car last night?</li>
+      <li>Compare gas system balance this month with last year.</li>
+      <li>Which municipalities added the most solar capacity since 2016?</li>
+      <li>Is Denmark importing or exporting right now, and from where?</li>
+      <li>Plot hourly consumption per grid area for January.</li>
+      <li>What does the day-ahead price do on a windy Sunday?</li>
+    </ul>
+  </div>
+</section>
+
+<section id="data">
+  <div class="container">
+    <div class="eyebrow">The catalogue</div>
+    <h2>100 datasets, four publishers.</h2>
+    <p class="section-subtitle">Everything Energinet publishes through <a href="https://www.energidataservice.dk/">Energi Data Service</a>: 71 transmission-level electricity datasets, 15 gas, 10 distribution-level consumption and production, and 4 from Gas Storage Denmark.</p>
+    <div class="facts">
+      <div class="fact"><h3>One minute to twenty years</h3><p>From <code>PowerSystemRightNow</code> at one-minute resolution to hourly settlement data reaching back to 2005.</p></div>
+      <div class="fact"><h3>Schemas, not guesswork</h3><p><code>describe_dataset</code> hands the model every column with its type and unit, the time column that filtering works on, and the first and last timestamp that actually exist.</p></div>
+      <div class="fact"><h3>Stale data is flagged</h3><p>22 datasets are discontinued and still answer with old rows. The server says so and names the replacement instead of letting last year's prices pass as today's.</p></div>
+      <div class="fact"><h3>Rate limits respected</h3><p>The platform limits requests per dataset. Responses are cached for one update interval, so repeated questions are free and a limit is reported as something to wait out, not retry.</p></div>
+      <div class="fact"><h3>Summaries, not row dumps</h3><p>A year of five-minute data is 105,000 rows. Ask for a summary and get min, max, mean and sum per column instead.</p></div>
+      <div class="fact"><h3>Bulk stays out of the chat</h3><p><code>download_url</code> builds a CSV or Excel link for extracts too big to read aloud. Nothing is fetched to build it.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="questions">
+  <div class="container">
+    <div class="eyebrow">Questions</div>
+    <h2>Short answers.</h2>
+    <div class="faq">
+      <div class="q"><h3>Do I need an API key?</h3><p>No. Energi Data Service is open data and needs no registration, no key and no contract. That is the whole setup story.</p></div>
+      <div class="q"><h3>Which assistants work?</h3><p>Any MCP client — Claude, ChatGPT, Cursor, Mistral or a local model. It speaks standard MCP over stdio, and streamable HTTP when you host it.</p></div>
+      <div class="q"><h3>Is this official?</h3><p>No. It is an independent open-source client for a public API, not affiliated with Energinet or Energi Data Service.</p></div>
+      <div class="q"><h3>Are these the prices I pay?</h3><p>No. Day-ahead spot prices exclude grid tariffs, taxes and VAT, which roughly double a Danish household bill. The tariffs themselves are in <code>DatahubPricelist</code> if you want to compute the real thing.</p></div>
+      <div class="q"><h3>Why does it cache?</h3><p>Rate limits are per dataset and deliberately tight: the platform expects about one request per update interval. Caching is what lets an agent ask follow-up questions without being blocked.</p></div>
+      <div class="q"><h3>Can it write anything?</h3><p>No. Every tool is read-only, and the upstream API has no write endpoints.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="open">
+  <div class="container">
+    <div class="eyebrow">Open source</div>
+    <h2>Software, not a service.</h2>
+    <p class="section-subtitle">There is no hosted version and nothing to sign up for. Run your own copy. MIT licence.</p>
+    <div class="fine" style="margin-top:1.5rem">
+      <p><strong>Disclaimer.</strong> Use at your own risk. The software is provided as is, without warranty of any kind, and the authors accept no liability for how it is used or for any decision taken on the basis of the data it returns. It is not affiliated with Energinet, Energi Data Service, Anthropic or any energy company. Data is published by Energinet under their own terms; check those before relying on it commercially.</p>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="container">
+    <p>EnergiMCP is an independent open-source project. Data from Energinet's Energi Data Service. MIT licence.</p>
+    <nav>
+      <a href="https://github.com/noskillish/energimcp">GitHub</a>
+      <a href="#start">Get started</a>
+      <a href="#data">Data</a>
+      <a href="#questions">Questions</a>
+      <a href="https://www.energidataservice.dk/">Energi Data Service</a>
+    </nav>
+  </div>
+</footer>
+</body>
+</html>

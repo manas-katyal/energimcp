@@ -1,0 +1,65 @@
+{
+  "name": "energimcp",
+  "version": "0.1.0",
+  "mcpName": "io.github.noskillish/energimcp",
+  "description": "EnergiMCP: read-only MCP server for Danish energy data — electricity prices, carbon intensity, consumption, production and gas — from Energinet's Energi Data Service",
+  "keywords": [
+    "mcp",
+    "mcp-server",
+    "model-context-protocol",
+    "energy",
+    "electricity",
+    "energinet",
+    "energidataservice",
+    "denmark",
+    "carbon-intensity",
+    "day-ahead-prices",
+    "open-data",
+    "claude"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/noskillish/energimcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/noskillish/energimcp/issues"
+  },
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "start": "node src/server.ts",
+    "dev": "node --watch --env-file-if-exists=.env src/server.ts",
+    "stdio": "node --env-file-if-exists=.env src/stdio.ts",
+    "check": "node --env-file-if-exists=.env src/cli.ts check",
+    "datasets": "node --env-file-if-exists=.env src/cli.ts datasets",
+    "describe": "node --env-file-if-exists=.env src/cli.ts describe",
+    "test": "node --test test/*.test.ts",
+    "typecheck": "tsc --noEmit",
+    "catalog": "node scripts/catalog.ts",
+    "local": "node bin/energimcp.js",
+    "build": "rm -rf dist/lib && tsc -p tsconfig.build.json && cp -R data dist/data",
+    "prepublishOnly": "npm run build && npm test"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "express": "^5.2.1",
+    "zod": "^4.5.4"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^24.0.0",
+    "typescript": "^5.8.0"
+  },
+  "bin": {
+    "energimcp": "bin/energimcp.js"
+  },
+  "files": [
+    "bin",
+    "dist",
+    "README.md",
+    "LICENSE"
+  ]
+}
