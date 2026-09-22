@@ -71,7 +71,7 @@ Hosting it is optional. The stdio server above is enough for a desktop client; d
 
 ### Railway
 
-`railway.json` builds from the `Dockerfile` and health-checks `/healthz`. From a clone:
+`.railway/railway.ts` declares the service and health-checks `/healthz`; the build comes from the `Dockerfile` at the repository root, which Railway picks up automatically. From a clone:
 
 ```bash
 npm i -g @railway/cli
