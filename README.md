@@ -67,6 +67,24 @@ One correctness note worth stating: in `PowerSystemRightNow`, **positive exchang
 
 `npm start` serves stateless streamable HTTP on `/mcp`, with `/healthz` for a probe. There is no auth, because there is nothing private behind it — do not put anything private behind it. The `Dockerfile` builds a container; `CACHE_DIR` is the only volume worth mounting, and only to keep the catalogue warm across restarts.
 
+Hosting it is optional. The stdio server above is enough for a desktop client; deploy only if you want the tools on claude.ai or your phone, where a client cannot launch a local process.
+
+### Railway
+
+`railway.json` builds from the `Dockerfile` and health-checks `/healthz`. From a clone:
+
+```bash
+npm i -g @railway/cli
+railway login
+railway init            # creates the project
+railway up              # builds and deploys
+railway domain          # gives it a public URL
+```
+
+Then add `https://<your-domain>/mcp` as a custom connector in your assistant. Nothing else to configure: there are no secrets, and `BASE_URL` is detected from `RAILWAY_PUBLIC_DOMAIN`.
+
+The same container runs anywhere — Fly, Render, a VPS. It is stateless, so scale it to as many replicas as you like; the only cost of losing the cache is one extra catalogue fetch per instance.
+
 ## Layout
 
 ```
