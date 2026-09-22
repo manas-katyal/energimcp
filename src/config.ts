@@ -42,7 +42,7 @@ export const config = {
   // return hundreds of thousands of rows and nothing good comes of that.
   defaultLimit: Number(env.DEFAULT_LIMIT ?? 200),
   maxLimit: Number(env.MAX_LIMIT ?? 5000),
-  userAgent: env.USER_AGENT ?? "EnergiMCP (+https://github.com/noskillish/energimcp)",
+  userAgent: env.USER_AGENT ?? "EnergiMCP (+https://github.com/manas-katyal/energimcp)",
 };
 
 /** What is stopping the server from working. Normally empty: there is nothing to configure. */
