@@ -3,6 +3,7 @@
 // login: the MCP endpoint is stateless and open, and each request gets its own
 // transport so instances can be scaled horizontally without sticky sessions.
 import express from "express";
+import { fileURLToPath } from "node:url";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import { config, setupProblems } from "./config.ts";
 import { createServer, VERSION } from "./mcp.ts";
@@ -23,15 +24,22 @@ export function createApp() {
     next();
   });
 
+  // Clients such as claude.ai pick a connector's icon from the server's own
+  // origin, so the favicon has to live here and not only on the website.
+  const publicDir = fileURLToPath(new URL("../public/", import.meta.url));
+  app.use(express.static(publicDir, { index: false, maxAge: "1d" }));
+
   app.get("/healthz", (_req, res) => {
     res.json({ ok: true, version: VERSION, api: config.apiBase, problems: setupProblems() });
   });
 
   app.get("/", (_req, res) => {
     res
-      .type("text/plain")
+      .type("html")
       .send(
-        `${config.appName} ${VERSION}\n\nRead-only MCP server for Energi Data Service (Danish energy data).\nMCP endpoint: POST ${config.baseUrl}/mcp\nHealth: ${config.baseUrl}/healthz\n`,
+        `<!doctype html><meta charset="utf-8"><title>${config.appName}</title>` +
+          `<link rel="icon" href="/icon.svg" type="image/svg+xml"><link rel="icon" href="/favicon.ico" sizes="48x48">` +
+          `<pre>${config.appName} ${VERSION}\n\nRead-only MCP server for Energi Data Service (Danish energy data).\nMCP endpoint: POST ${config.baseUrl}/mcp\nHealth: ${config.baseUrl}/healthz\n</pre>`,
       );
   });
 

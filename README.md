@@ -11,6 +11,10 @@ AI    Wait until the afternoon. The cheapest quarter-hour is 14:15 at 0.91 kr/kW
       the morning peak at 07:15 is 2.96 kr/kWh. Average across the day is 1.43 kr/kWh.
 ```
 
+## Add it to Claude
+
+A hosted instance runs at **`https://energimcp-production.up.railway.app/mcp`**. In Claude, open Settings → Connectors → Add custom connector and paste that URL. There is no login. Once added on claude.ai or the desktop app, it shows up in the Claude mobile app too.
+
 ## Install
 
 Needs Node 24 or newer. Add it to your MCP client:

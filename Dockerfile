@@ -10,6 +10,7 @@ COPY package.json package-lock.json ./
 RUN npm ci --omit=dev && npm cache clean --force
 COPY src ./src
 COPY data ./data
+COPY public ./public
 RUN mkdir -p /cache && chown -R node:node /cache
 USER node
 EXPOSE 8080

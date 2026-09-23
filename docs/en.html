@@ -355,6 +355,9 @@
   .cmd pre, .way ol.setup .cmd pre { margin-top: 0; padding-right: 104px !important; }
   .copy { position: absolute; top: calc(14px + 10.4px - 13px); right: 10px; height: 26px; display: inline-flex; align-items: center; gap: 6px; appearance: none; border: 1px solid var(--line); background: var(--tile); color: var(--dim);
     font: inherit; font-size: 12px; font-weight: 500; padding: 5px 10px 5px 8px; border-radius: 999px; cursor: pointer; transition: color 200ms var(--t-ease), border-color 200ms var(--t-ease); }
+  .urlbox { position: relative; margin-top: 10px; }
+  .urlbox pre { margin-top: 0; padding-right: 96px; color: var(--ink); white-space: pre-wrap; word-break: break-all; }
+  .urlbox .copy { top: 50%; transform: translateY(-50%); }
   .copy:hover { color: var(--ink); border-color: var(--line-strong); }
   .copy.is-done { color: var(--ok); }
   .t-icon-swap { position: relative; display: inline-grid; }
@@ -538,17 +541,34 @@ DayAheadPriceDKK <span class="d">DKK/MWh</span>
     <div class="wrap">
       <div class="head">
         <p class="eyebrow">Setup</p>
-        <h2>Two ways to run it.</h2>
-        <p>On your own machine it needs no server at all. Hosted, it works from claude.ai and your phone.</p>
+        <h2>Three ways to use it.</h2>
+        <p>The quickest is our hosted server: add it to Claude once and it works on the web, the desktop app and your phone.</p>
       </div>
       <div class="seg-wrap" id="segwrap" hidden>
         <div class="t-tabs" role="tablist" aria-label="Where to run EnergiMCP">
           <span class="t-tabs-pill" aria-hidden="true"></span>
-          <button class="t-tab" role="tab" id="tab-local" aria-controls="panel-local" aria-selected="true">On your machine</button>
-          <button class="t-tab" role="tab" id="tab-hosted" aria-controls="panel-hosted" aria-selected="false">On a server</button>
+          <button class="t-tab" role="tab" id="tab-claude" aria-controls="panel-claude" aria-selected="true">In Claude</button>
+          <button class="t-tab" role="tab" id="tab-local" aria-controls="panel-local" aria-selected="false">On your machine</button>
+          <button class="t-tab" role="tab" id="tab-hosted" aria-controls="panel-hosted" aria-selected="false">Host it yourself</button>
         </div>
       </div>
-      <div id="panel-local" role="tabpanel" aria-labelledby="tab-local" class="way">
+      <div id="panel-claude" role="tabpanel" aria-labelledby="tab-claude" class="way">
+        <h3>Add it to Claude</h3>
+        <ol class="setup">
+          <li>In Claude, open <b>Settings → Connectors</b> and choose <b>Add custom connector</b>.</li>
+          <li>Name it EnergiMCP and paste the URL below. No login, no key.</li>
+          <li>Done. It shows up in the Claude app on your phone by itself.</li>
+        </ol>
+        <div class="urlbox">
+          <pre><b>https://energimcp-production.up.railway.app/mcp</b></pre>
+          <button class="copy" type="button" data-copy="https://energimcp-production.up.railway.app/mcp" data-done="Copied">Copy</button>
+        </div>
+        <div class="btns" style="justify-content:flex-start;margin-top:18px">
+          <a class="btn primary" href="https://claude.ai/settings/connectors" target="_blank" rel="noopener">Open Connectors in Claude</a>
+        </div>
+        <p class="fine">On your phone: add it once on claude.ai or in the desktop app and it carries over to iOS and Android. The server is free and runs on open data.</p>
+      </div>
+      <div id="panel-local" role="tabpanel" aria-labelledby="tab-local" class="way" hidden>
         <h3>Local, over stdio</h3>
         <p>With Node 24 or newer, add this to <code>claude_desktop_config.json</code> or a project's <code>.mcp.json</code>. Nothing else to configure.</p>
         <div class="term">
@@ -562,7 +582,7 @@ DayAheadPriceDKK <span class="d">DKK/MWh</span>
       </div>
       <div id="panel-hosted" role="tabpanel" aria-labelledby="tab-hosted" class="way" hidden>
         <h3>Hosted, over HTTP</h3>
-        <p>The same container runs anywhere. Add the endpoint as a custom connector in claude.ai — there is no authentication, because there are no secrets.</p>
+        <p>Rather run your own? The same container runs anywhere. Add your endpoint as a custom connector in claude.ai — there is no authentication, because there are no secrets.</p>
         <div class="btns" style="justify-content:flex-start">
           <a class="btn primary" href="https://railway.com/new/template?template=https%3A%2F%2Fgithub.com%2Fmanas-katyal%2Fenergimcp" target="_blank" rel="noopener">Deploy on Railway</a>
         </div>
@@ -759,6 +779,12 @@ if (!location.hash) {
     const on = t.dataset.on === "true";
     t.classList.add("is-init"); t.dataset.on = String(!on); t.setAttribute("aria-checked", String(!on));
     setTimeout(() => { location.href = t.href; }, reduce ? 0 : ms("--toggle-dur", 350));
+  }));
+  // Copy the connector URL.
+  document.querySelectorAll(".copy[data-copy]").forEach((b) => b.addEventListener("click", async () => {
+    try { await navigator.clipboard.writeText(b.dataset.copy); } catch { return; }
+    const label = b.textContent; b.classList.add("is-done"); b.textContent = b.dataset.done;
+    setTimeout(() => { b.classList.remove("is-done"); b.textContent = label; }, 1600);
   }));
   // FAQ accordion.
   document.querySelectorAll(".t-acc").forEach((acc) => {

@@ -355,6 +355,9 @@
   .cmd pre, .way ol.setup .cmd pre { margin-top: 0; padding-right: 104px !important; }
   .copy { position: absolute; top: calc(14px + 10.4px - 13px); right: 10px; height: 26px; display: inline-flex; align-items: center; gap: 6px; appearance: none; border: 1px solid var(--line); background: var(--tile); color: var(--dim);
     font: inherit; font-size: 12px; font-weight: 500; padding: 5px 10px 5px 8px; border-radius: 999px; cursor: pointer; transition: color 200ms var(--t-ease), border-color 200ms var(--t-ease); }
+  .urlbox { position: relative; margin-top: 10px; }
+  .urlbox pre { margin-top: 0; padding-right: 96px; color: var(--ink); white-space: pre-wrap; word-break: break-all; }
+  .urlbox .copy { top: 50%; transform: translateY(-50%); }
   .copy:hover { color: var(--ink); border-color: var(--line-strong); }
   .copy.is-done { color: var(--ok); }
   .t-icon-swap { position: relative; display: inline-grid; }
@@ -538,17 +541,34 @@ DayAheadPriceDKK <span class="d">DKK/MWh</span>
     <div class="wrap">
       <div class="head">
         <p class="eyebrow">Opsætning</p>
-        <h2>To måder at køre den på.</h2>
-        <p>På din egen maskine kræver den ingen server. Hostet virker den fra claude.ai og din telefon.</p>
+        <h2>Tre måder at bruge den på.</h2>
+        <p>Den hurtigste vej er vores hostede server: sæt den ind i Claude én gang, så virker den på web, desktop og din telefon.</p>
       </div>
       <div class="seg-wrap" id="segwrap" hidden>
         <div class="t-tabs" role="tablist" aria-label="Hvor EnergiMCP skal køre">
           <span class="t-tabs-pill" aria-hidden="true"></span>
-          <button class="t-tab" role="tab" id="tab-local" aria-controls="panel-local" aria-selected="true">På din maskine</button>
-          <button class="t-tab" role="tab" id="tab-hosted" aria-controls="panel-hosted" aria-selected="false">På en server</button>
+          <button class="t-tab" role="tab" id="tab-claude" aria-controls="panel-claude" aria-selected="true">I Claude</button>
+          <button class="t-tab" role="tab" id="tab-local" aria-controls="panel-local" aria-selected="false">På din maskine</button>
+          <button class="t-tab" role="tab" id="tab-hosted" aria-controls="panel-hosted" aria-selected="false">Host selv</button>
         </div>
       </div>
-      <div id="panel-local" role="tabpanel" aria-labelledby="tab-local" class="way">
+      <div id="panel-claude" role="tabpanel" aria-labelledby="tab-claude" class="way">
+        <h3>Tilføj den til Claude</h3>
+        <ol class="setup">
+          <li>Åbn <b>Indstillinger → Connectors</b> i Claude og vælg <b>Tilføj custom connector</b>.</li>
+          <li>Kald den EnergiMCP og indsæt URL’en herunder. Ingen login, ingen nøgle.</li>
+          <li>Færdig. Den dukker op i Claude-appen på din telefon af sig selv.</li>
+        </ol>
+        <div class="urlbox">
+          <pre><b>https://energimcp-production.up.railway.app/mcp</b></pre>
+          <button class="copy" type="button" data-copy="https://energimcp-production.up.railway.app/mcp" data-done="Kopieret">Kopiér</button>
+        </div>
+        <div class="btns" style="justify-content:flex-start;margin-top:18px">
+          <a class="btn primary" href="https://claude.ai/settings/connectors" target="_blank" rel="noopener">Åbn Connectors i Claude</a>
+        </div>
+        <p class="fine">På telefonen: tilføj den én gang på claude.ai eller i desktop-appen, så følger den med til iOS og Android. Serveren er gratis og kører på åbne data.</p>
+      </div>
+      <div id="panel-local" role="tabpanel" aria-labelledby="tab-local" class="way" hidden>
         <h3>Lokalt, over stdio</h3>
         <p>Med Node 24 eller nyere tilføjer du dette til <code>claude_desktop_config.json</code> eller et projekts <code>.mcp.json</code>. Intet andet at konfigurere.</p>
         <div class="term">
@@ -562,7 +582,7 @@ DayAheadPriceDKK <span class="d">DKK/MWh</span>
       </div>
       <div id="panel-hosted" role="tabpanel" aria-labelledby="tab-hosted" class="way" hidden>
         <h3>Hostet, over HTTP</h3>
-        <p>Den samme container kører hvor som helst. Tilføj endpointet som en custom connector i claude.ai — der er ingen authentication, for der er ingen hemmeligheder.</p>
+        <p>Vil du hellere køre din egen? Den samme container kører hvor som helst. Tilføj dit eget endpoint som en custom connector i claude.ai — der er ingen authentication, for der er ingen hemmeligheder.</p>
         <div class="btns" style="justify-content:flex-start">
           <a class="btn primary" href="https://railway.com/new/template?template=https%3A%2F%2Fgithub.com%2Fmanas-katyal%2Fenergimcp" target="_blank" rel="noopener">Deploy på Railway</a>
         </div>
@@ -759,6 +779,12 @@ if (!location.hash) {
     const on = t.dataset.on === "true";
     t.classList.add("is-init"); t.dataset.on = String(!on); t.setAttribute("aria-checked", String(!on));
     setTimeout(() => { location.href = t.href; }, reduce ? 0 : ms("--toggle-dur", 350));
+  }));
+  // Copy the connector URL.
+  document.querySelectorAll(".copy[data-copy]").forEach((b) => b.addEventListener("click", async () => {
+    try { await navigator.clipboard.writeText(b.dataset.copy); } catch { return; }
+    const label = b.textContent; b.classList.add("is-done"); b.textContent = b.dataset.done;
+    setTimeout(() => { b.classList.remove("is-done"); b.textContent = label; }, 1600);
   }));
   // FAQ accordion.
   document.querySelectorAll(".t-acc").forEach((acc) => {

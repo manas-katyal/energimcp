@@ -6,7 +6,16 @@ export const VERSION = "0.1.0";
 
 export function createServer(): McpServer {
   const server = new McpServer(
-    { name: "energi", version: VERSION },
+    {
+      name: "energi",
+      title: "EnergiMCP",
+      version: VERSION,
+      websiteUrl: "https://energimcp.dk",
+      icons: [
+        { src: "https://energimcp.dk/icon.svg", mimeType: "image/svg+xml", sizes: ["any"] },
+        { src: "https://energimcp.dk/icon-512.png", mimeType: "image/png", sizes: ["512x512"] },
+      ],
+    },
     {
       instructions: [
         "Read-only access to Energi Data Service, Energinet's open data platform for the Danish energy system: electricity prices, carbon intensity, consumption, production, grid capacity, balancing markets and gas. It has no write tools and needs no credentials.",
