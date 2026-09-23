@@ -84,7 +84,7 @@
   .ai b { font-weight: 500; font-variant-numeric: tabular-nums; }
   .tool { font-size: 0.68rem; color: var(--muted); margin: -0.4rem 0 0.9rem 0.25rem; }
   .tool code { font-size: 0.66rem; color: var(--dim); }
-  .tool .dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); margin-right: 0.45rem; vertical-align: middle; }
+  .tool .dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--live); margin-right: 0.45rem; vertical-align: middle; }
 
   section { padding: 4.5rem 0; border-top: 1px solid var(--border); }
   @media (min-width: 768px) { section { padding: 5.5rem 0; } }
@@ -194,7 +194,7 @@
   .mm.ai { background: var(--bg-card); border: 1px solid var(--border); border-bottom-left-radius: 3px; max-width: 92%; }
   .mm.ai b { font-weight: 500; }
   .mm.tool { font-family: 'IBM Plex Mono', monospace; font-size: 0.58rem; color: var(--muted); padding: 0 0.2rem; display: flex; align-items: center; gap: 0.35rem; }
-  .mm.tool i { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); flex: none; }
+  .mm.tool i { width: 5px; height: 5px; border-radius: 50%; background: var(--live); flex: none; }
   /* A dataset's schema: the column names, their types and units, and the real
      coverage window - which is what the copy beside it promises. */
   .mock-schema .mock-bar { justify-content: space-between; }
@@ -251,9 +251,14 @@
   .cell .cap b { color: var(--ink); font-weight: 500; }
   .cell code { font-size: 0.78rem; color: var(--ink); }
   @media (min-width: 700px) { .cell.wide { grid-column: span 2; } }
-  .cell.solid { background: var(--ink); }
+  /* Stacked on a phone the min-height only buys dead space above each figure. */
+  @media (max-width: 699px) { .cell { min-height: 0; padding: 1.25rem 1.2rem; } }
+  .cell.solid { background: linear-gradient(135deg, #4f7cff 0%, #8b5cf6 38%, #22c1dc 72%, #34d399 100%); position: relative; overflow: hidden; }
+  .cell.solid::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(180deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.04) 50%, rgba(255,255,255,0) 100%); }
+  .cell.solid > * { position: relative; z-index: 1; }
   .cell.solid .fig, .cell.solid .cap b, .cell.solid code { color: #f5f5f7; }
-  .cell.solid .cap, .cell.solid .fig small { color: rgba(245,245,247,0.68); }
+  .cell.solid .cap, .cell.solid .fig small { color: rgba(255,255,255,0.85); }
 
   /* Accordion questions, so the section is scannable instead of a wall. */
   .faq details { border-top: 1px solid var(--border); }
@@ -297,6 +302,9 @@
   .fine p + p { margin-top: 0.85rem; } .fine strong { color: var(--ink); font-weight: 500; }
 
   pre.cmd { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.25rem; margin-top: 1.5rem; overflow-x: auto; font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem; line-height: 1.7; color: var(--ink); }
+  /* On a phone the comment line is the only thing that needs scrolling, so let
+     it wrap while the JSON keeps its shape. */
+  @media (max-width: 560px) { pre.cmd { font-size: 0.7rem; } pre.cmd .c { display: block; white-space: pre-wrap; } }
   pre.cmd .c { color: var(--muted); }
 
   footer { padding: 3rem 0; border-top: 1px solid var(--border); }
