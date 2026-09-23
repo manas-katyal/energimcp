@@ -422,7 +422,7 @@
     <h1 class="t-stagger-line t-stagger-line--2">Denmark's energy data.<br>Now in your AI.</h1>
     <p class="lede t-stagger-line t-stagger-line--3">Ask what power costs right now, how green the grid is, or what the wind did last January. 100 datasets from Energinet, read-only, no API key.</p>
     <div class="btns t-stagger-line t-stagger-line--4">
-      <a class="btn primary" href="#run">Get started</a>
+      <a class="btn primary" href="https://claude.ai/customize/connectors?modal=add-custom-connector&amp;connectorName=EnergiMCP&amp;connectorUrl=https%3A%2F%2Fenergimcp-production.up.railway.app%2Fmcp" target="_blank" rel="noopener">Add to Claude</a>
       <a class="more t-learn" href="#how">How it works
         <span class="t-learn-chevron" aria-hidden="true"><svg viewBox="0 0 16 16"><path class="t-learn-arm t-learn-arm-top" d="M6 4L10 8"/><path class="t-learn-arm t-learn-arm-bot" d="M10 8L6 12"/></svg></span>
       </a>
@@ -553,20 +553,16 @@ DayAheadPriceDKK <span class="d">DKK/MWh</span>
         </div>
       </div>
       <div id="panel-claude" role="tabpanel" aria-labelledby="tab-claude" class="way">
-        <h3>Add it to Claude</h3>
-        <ol class="setup">
-          <li>In Claude, open <b>Settings → Connectors</b> and choose <b>Add custom connector</b>.</li>
-          <li>Name it EnergiMCP and paste the URL below. No login, no key.</li>
-          <li>Done. It shows up in the Claude app on your phone by itself.</li>
-        </ol>
+        <h3>Add it to Claude in one click</h3>
+        <p>The button opens Claude with the name and URL filled in. You confirm, and it's there — no login, no key.</p>
+        <div class="btns" style="justify-content:flex-start;margin-top:8px">
+          <a class="btn primary" href="https://claude.ai/customize/connectors?modal=add-custom-connector&amp;connectorName=EnergiMCP&amp;connectorUrl=https%3A%2F%2Fenergimcp-production.up.railway.app%2Fmcp" target="_blank" rel="noopener">Add to Claude</a>
+        </div>
+        <p class="fine">It shows up in the Claude app on iOS and Android by itself. Prefer doing it by hand: Settings → Connectors → Add custom connector, and paste this URL.</p>
         <div class="urlbox">
           <pre><b>https://energimcp-production.up.railway.app/mcp</b></pre>
           <button class="copy" type="button" data-copy="https://energimcp-production.up.railway.app/mcp" data-done="Copied">Copy</button>
         </div>
-        <div class="btns" style="justify-content:flex-start;margin-top:18px">
-          <a class="btn primary" href="https://claude.ai/settings/connectors" target="_blank" rel="noopener">Open Connectors in Claude</a>
-        </div>
-        <p class="fine">On your phone: add it once on claude.ai or in the desktop app and it carries over to iOS and Android. The server is free and runs on open data.</p>
       </div>
       <div id="panel-local" role="tabpanel" aria-labelledby="tab-local" class="way" hidden>
         <h3>Local, over stdio</h3>

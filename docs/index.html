@@ -422,7 +422,7 @@
     <h1 class="t-stagger-line t-stagger-line--2">Danmarks energidata.<br>Nu i din AI.</h1>
     <p class="lede t-stagger-line t-stagger-line--3">Spørg hvad strøm koster lige nu, hvor grønt elnettet er, eller hvad vinden lavede sidste januar. 100 datasæt fra Energinet, read-only, ingen API-nøgle.</p>
     <div class="btns t-stagger-line t-stagger-line--4">
-      <a class="btn primary" href="#run">Kom i gang</a>
+      <a class="btn primary" href="https://claude.ai/customize/connectors?modal=add-custom-connector&amp;connectorName=EnergiMCP&amp;connectorUrl=https%3A%2F%2Fenergimcp-production.up.railway.app%2Fmcp" target="_blank" rel="noopener">Tilføj til Claude</a>
       <a class="more t-learn" href="#how">Sådan virker det
         <span class="t-learn-chevron" aria-hidden="true"><svg viewBox="0 0 16 16"><path class="t-learn-arm t-learn-arm-top" d="M6 4L10 8"/><path class="t-learn-arm t-learn-arm-bot" d="M10 8L6 12"/></svg></span>
       </a>
@@ -553,20 +553,16 @@ DayAheadPriceDKK <span class="d">DKK/MWh</span>
         </div>
       </div>
       <div id="panel-claude" role="tabpanel" aria-labelledby="tab-claude" class="way">
-        <h3>Tilføj den til Claude</h3>
-        <ol class="setup">
-          <li>Åbn <b>Indstillinger → Connectors</b> i Claude og vælg <b>Tilføj custom connector</b>.</li>
-          <li>Kald den EnergiMCP og indsæt URL’en herunder. Ingen login, ingen nøgle.</li>
-          <li>Færdig. Den dukker op i Claude-appen på din telefon af sig selv.</li>
-        </ol>
+        <h3>Tilføj den til Claude med ét klik</h3>
+        <p>Knappen åbner Claude med navn og URL udfyldt. Du bekræfter, og så er den der — ingen login, ingen nøgle.</p>
+        <div class="btns" style="justify-content:flex-start;margin-top:8px">
+          <a class="btn primary" href="https://claude.ai/customize/connectors?modal=add-custom-connector&amp;connectorName=EnergiMCP&amp;connectorUrl=https%3A%2F%2Fenergimcp-production.up.railway.app%2Fmcp" target="_blank" rel="noopener">Tilføj til Claude</a>
+        </div>
+        <p class="fine">Den dukker op i Claude-appen på iOS og Android af sig selv. Foretrækker du at gøre det i hånden: Indstillinger → Connectors → Tilføj custom connector, og indsæt denne URL.</p>
         <div class="urlbox">
           <pre><b>https://energimcp-production.up.railway.app/mcp</b></pre>
           <button class="copy" type="button" data-copy="https://energimcp-production.up.railway.app/mcp" data-done="Kopieret">Kopiér</button>
         </div>
-        <div class="btns" style="justify-content:flex-start;margin-top:18px">
-          <a class="btn primary" href="https://claude.ai/settings/connectors" target="_blank" rel="noopener">Åbn Connectors i Claude</a>
-        </div>
-        <p class="fine">På telefonen: tilføj den én gang på claude.ai eller i desktop-appen, så følger den med til iOS og Android. Serveren er gratis og kører på åbne data.</p>
       </div>
       <div id="panel-local" role="tabpanel" aria-labelledby="tab-local" class="way" hidden>
         <h3>Lokalt, over stdio</h3>

@@ -13,7 +13,7 @@ AI    Wait until the afternoon. The cheapest quarter-hour is 14:15 at 0.91 kr/kW
 
 ## Add it to Claude
 
-A hosted instance runs at **`https://energimcp-production.up.railway.app/mcp`**. In Claude, open Settings → Connectors → Add custom connector and paste that URL. There is no login. Once added on claude.ai or the desktop app, it shows up in the Claude mobile app too.
+**[Add to Claude](https://claude.ai/customize/connectors?modal=add-custom-connector&connectorName=EnergiMCP&connectorUrl=https%3A%2F%2Fenergimcp-production.up.railway.app%2Fmcp)** opens Claude with the connector filled in; confirm and it is added. By hand: Settings → Connectors → Add custom connector, and paste `https://energimcp-production.up.railway.app/mcp`. There is no login. Once added on claude.ai or the desktop app, it shows up in the Claude mobile app too.
 
 ## Install
 
