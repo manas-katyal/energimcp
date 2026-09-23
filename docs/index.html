@@ -154,7 +154,7 @@
     .how-col:nth-child(even) .how-visual { order: 2; }
     .how-col:nth-child(even) .how-body { order: 1; }
   }
-  .how-visual { position: relative; aspect-ratio: 4 / 3; background: var(--panel); border-radius: 18px; padding: 2rem 1.75rem; display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
+  .how-visual { position: relative; aspect-ratio: 4 / 3; background: var(--panel); border-radius: 18px; padding: 2.75rem 1.75rem 2rem; display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
   .how-visual .badge { position: absolute; top: 0.9rem; left: 0.9rem; width: 1.55rem; height: 1.55rem; border-radius: 8px;
     background: rgba(255,255,255,0.7); color: var(--dim); display: grid; place-items: center;
     font-size: 0.7rem; font-weight: 500; font-variant-numeric: tabular-nums; }
@@ -164,7 +164,9 @@
   .how-visual .mock pre { font-size: 0.68rem; padding: 0.9rem; }
   .how-visual .mm { font-size: 0.8rem; }
   .how-visual .mm.tool { font-size: 0.68rem; }
-  .how-visual .mock-row, .how-visual .mock-search { font-size: 0.74rem; }
+  .how-visual .mock-row { font-size: 0.74rem; }
+  .how-visual .mock-schema .mock-bar b { font-size: 0.74rem; }
+  .how-visual .mock-foot { font-size: 0.68rem; }
   .how-visual .mock-row em { font-size: 0.68rem; }
   .how-cta { display: flex; align-items: center; justify-content: center; gap: 0.75rem; margin-top: 3.5rem; }
   .how-cta::before, .how-cta::after { content: ""; flex: 1 1 0; border-top: 1px dashed var(--border-strong); }
@@ -177,20 +179,27 @@
   .mock-bar em { font-style: normal; font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem; color: var(--muted); margin-left: 0.4rem; }
   .mock pre { font-family: 'IBM Plex Mono', monospace; font-size: 0.57rem; line-height: 1.75; color: var(--dim); padding: 0.7rem; overflow: hidden; }
   .mock pre b { color: var(--ink); font-weight: 500; }
-  .mock-chat { background: none; border: 0; display: flex; flex-direction: column; gap: 0.4rem; }
+  /* No uniform gap: a tool line belongs to the reply beneath it, so it hugs
+     that bubble and the space falls between turns instead. */
+  .mock-chat { background: none; border: 0; display: flex; flex-direction: column; gap: 0; }
+  .mock-chat > * { margin-bottom: 0.8rem; }
+  .mock-chat > .mm.tool { margin-bottom: 0.3rem; }
+  .mock-chat > :last-child { margin-bottom: 0; }
   .mm { font-size: 0.68rem; line-height: 1.45; padding: 0.45rem 0.65rem; border-radius: 9px; }
   .mm.me { background: var(--ink); color: #f5f5f3; align-self: flex-end; border-bottom-right-radius: 3px; max-width: 88%; }
   .mm.ai { background: var(--bg-card); border: 1px solid var(--border); border-bottom-left-radius: 3px; max-width: 92%; }
   .mm.ai b { font-weight: 500; }
   .mm.tool { font-family: 'IBM Plex Mono', monospace; font-size: 0.58rem; color: var(--muted); padding: 0 0.2rem; display: flex; align-items: center; gap: 0.35rem; }
   .mm.tool i { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); flex: none; }
-  .mock-list { padding: 0.55rem; }
-  .mock-search { font-size: 0.62rem; color: var(--muted); border: 1px solid var(--border); border-radius: 7px; padding: 0.35rem 0.55rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.35rem; }
-  .mock-search::before { content: ""; width: 7px; height: 7px; border: 1.5px solid var(--muted); border-radius: 50%; flex: none; }
-  .mock-row { display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; padding: 0.38rem 0.55rem; border-radius: 6px; font-size: 0.62rem; }
-  .mock-row:nth-child(2) { background: var(--bg); }
+  /* A dataset's schema: the column names, their types and units, and the real
+     coverage window - which is what the copy beside it promises. */
+  .mock-schema .mock-bar { justify-content: space-between; }
+  .mock-schema .mock-bar b { font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem; font-weight: 500; color: var(--ink); }
+  .mock-row { display: flex; justify-content: space-between; align-items: baseline; gap: 0.75rem; padding: 0.34rem 0.7rem; font-size: 0.62rem; }
+  .mock-row:not(:last-of-type) { border-bottom: 1px solid var(--border); }
   .mock-row span { font-family: 'IBM Plex Mono', monospace; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .mock-row em { font-style: normal; color: var(--muted); flex: none; font-size: 0.57rem; }
+  .mock-foot { padding: 0.45rem 0.7rem; border-top: 1px solid var(--border); background: var(--bg); font-size: 0.57rem; color: var(--muted); }
 
   .asks { list-style: none; display: grid; grid-template-columns: 1fr; gap: 0.75rem; margin-top: 2.5rem; }
   @media (min-width: 640px) { .asks { grid-template-columns: 1fr 1fr; } }
@@ -365,6 +374,7 @@
             <div class="mm ai">Cheapest at <b>14:15</b>, 0.91 kr/kWh. The 07:15 peak is more than three times that.</div>
             <div class="mm me">And the greenest?</div>
             <div class="mm tool"><i></i>get_carbon_intensity</div>
+            <div class="mm ai">Close &mdash; the same afternoon window. Solar is carrying the middle of the day.</div>
           </div>
         </div>
         <div class="how-body">
@@ -376,12 +386,13 @@
       <div class="how-col t-reveal" style="--t-index:2">
         <div class="how-visual">
           <span class="badge">3</span>
-          <div class="mock mock-list">
-            <div class="mock-search">consumption per municipality</div>
-            <div class="mock-row"><span>PrivateConsumptionHeatingHour</span><em>1 h</em></div>
-            <div class="mock-row"><span>ConsumptionGridAreaHour</span><em>1 h</em></div>
-            <div class="mock-row"><span>ProductionRegionMonth</span><em>1 mo</em></div>
-            <div class="mock-row"><span>CapacityPerMunicipality</span><em>1 mo</em></div>
+          <div class="mock mock-schema">
+            <div class="mock-bar"><em>describe_dataset</em><b>DayAheadPrices</b></div>
+            <div class="mock-row"><span>TimeUTC</span><em>datetime</em></div>
+            <div class="mock-row"><span>PriceArea</span><em>string</em></div>
+            <div class="mock-row"><span>DayAheadPriceDKK</span><em>number &middot; DKK/MWh</em></div>
+            <div class="mock-row"><span>DayAheadPriceEUR</span><em>number &middot; EUR/MWh</em></div>
+            <div class="mock-foot">15 min resolution &middot; 2025-10-01 &rarr; today</div>
           </div>
         </div>
         <div class="how-body">
