@@ -2,617 +2,659 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EnergiMCP · Your AI now reads the grid</title>
-<meta name="description" content="EnergiMCP is a read-only MCP server that connects Denmark's energy data — electricity prices, carbon intensity, consumption, production and gas — to Claude, ChatGPT or any MCP client. 100 datasets from Energinet. No API key.">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>EnergiMCP · Denmark's energy data in your AI</title>
+<meta name="description" content="EnergiMCP is a read-only MCP server for Danish energy data: electricity prices, carbon intensity, consumption, production and gas. 100 datasets from Energinet. No API key.">
 <link rel="icon" href="/icon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon-48.png" sizes="48x48" type="image/png">
 <link rel="icon" href="/favicon-192.png" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="canonical" href="https://energimcp.dk/">
 <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
-<meta name="theme-color" content="#ffffff">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 <meta property="og:site_name" content="EnergiMCP">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://energimcp.dk/">
-<meta property="og:title" content="EnergiMCP · Your AI now reads the grid">
-<meta property="og:description" content="Denmark's energy data — prices, carbon intensity, consumption, production, gas — in Claude, ChatGPT or any MCP client. Read-only, no API key.">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<meta property="og:title" content="EnergiMCP · Denmark's energy data in your AI">
+<meta property="og:description" content="Electricity prices, carbon intensity, consumption and the live grid — 100 datasets from Energinet, in Claude or any MCP client.">
 <style>
+
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  [hidden] { display: none !important; }
   :root {
-    --bg: #faf9f7; --bg-card: #ffffff; --ink: #0a0a0a; --dim: #5c5c5e; --muted: #8e8e93; --faint: #c7c7cc;
-    /* Motion, after transitions.dev: one house easing, blur as part of the move,
-       and a stagger step that every reveal reads from. */
-    --t-ease: cubic-bezier(0.22, 1, 0.36, 1);
-    --t-spring: cubic-bezier(0.34, 1.45, 0.64, 1);
-    --t-dur: 700ms;
-    --t-distance: 24px;
-    --t-blur: 3px;
-    --t-stagger: 80ms;
-    --digit-dur: 500ms; --digit-distance: 8px; --digit-stagger: 70ms; --digit-blur: 2px;
-    --digit-ease: cubic-bezier(0.34, 1.45, 0.64, 1); --digit-dir-x: 0; --digit-dir-y: 1;
-    /* card-resize + panel-reveal, composed by the accordion below */
-    --resize-dur: 300ms; --resize-ease: cubic-bezier(0.22, 1, 0.36, 1);
-    --panel-open-dur: 400ms; --panel-close-dur: 350ms; --panel-translate-y: 12px;
-    --panel-blur: 2px; --panel-ease: cubic-bezier(0.22, 1, 0.36, 1);
-    --border: #e8e8ea; --border-strong: #d4d4d8; --radius: 10px;
-    --panel: #f4f4f5;
-    /* Colour is an encoding, not decoration: low, high, and a live indicator. */
-    --low: #0f7b4f; --high: #c1352a; --live: #0f7b4f; --accent: #c1352a; --ok: #0f7b4f;
+    --bg: #ffffff; --alt: #f5f5f7; --tile: #ffffff; --ink: #1d1d1f; --dim: #6e6e73; --faint: #86868b;
+    --line: #d2d2d7; --link: #0066cc; --btn: #0071e3; --btn-ink: #ffffff; --soft-btn: #e8e8ed;
+    --nav: rgba(255, 255, 255, 0.78); --ok: #1d8348; --warn: #bf4800; --seg-pill: #ffffff;
   }
-  html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; interpolate-size: allow-keywords; }
-  body { font-family: 'IBM Plex Sans', -apple-system, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.6; }
-  .container { max-width: 880px; margin: 0 auto; padding: 0 1.5rem; }
-  @media (min-width: 768px) { .container { padding: 0 2rem; } }
-  code, .mono { font-family: 'IBM Plex Mono', monospace; }
-
-  header { position: sticky; top: 0; z-index: 50; padding: 1rem 0; }
-  header .container { display: flex; justify-content: center; }
-  .navpill { display: flex; align-items: center; gap: 0.35rem; padding: 0.35rem 0.4rem; border-radius: 999px;
-    background: rgba(255,255,255,0.82); border: 1px solid var(--border); backdrop-filter: blur(12px);
-    box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.04); }
-  .navpill .logo { padding: 0.35rem 0.6rem 0.35rem 0.45rem; }
-  .navpill nav { gap: 0.15rem; }
-  .navpill nav a { padding: 0.4rem 0.75rem; border-radius: 999px; transition: background var(--t-dur) var(--t-ease), color 200ms var(--t-ease); }
-  .navpill nav a:hover { background: var(--panel); color: var(--ink); }
-  @media (max-width: 520px) { .navpill nav a:not(:last-child) { display: none; } }
-  .logo { font-size: 1rem; font-weight: 500; letter-spacing: -0.02em; text-decoration: none; color: var(--ink); display: flex; align-items: center; gap: 0.6rem; }
-  .logo .mark { width: 22px; height: 22px; display: block; border-radius: 5px; flex: none; }
-  nav { display: flex; gap: 1.5rem; }
-  nav a { font-size: 0.85rem; color: var(--dim); text-decoration: none; transition: color 0.2s; }
-  nav a:hover { color: var(--ink); }
-  @media (max-width: 520px) { nav a:not(:last-child) { display: none; } }
-
-  .hero { padding: 5rem 0 4rem; }
-  @media (min-width: 768px) { .hero { padding: 7rem 0 5rem; } }
-  .hero h1 { font-size: clamp(2.3rem, 5.4vw, 3.9rem); font-weight: 500; letter-spacing: -0.035em; line-height: 1.05; margin-bottom: 1.5rem; }
-  .subtitle { font-size: clamp(1rem, 1.4vw, 1.15rem); color: var(--dim); max-width: 560px; margin-bottom: 2.5rem; line-height: 1.6; font-weight: 400; }
-  .cta-row { display: flex; gap: 0.75rem; flex-wrap: wrap; }
-  .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.7rem 1.5rem; border-radius: 999px; font-size: 0.85rem; font-weight: 500; text-decoration: none; transition: all 0.2s; }
-  .btn-primary { background: var(--ink); color: #f5f5f3; } .btn-primary:hover { background: #000; }
-  .btn-secondary { background: transparent; color: var(--ink); border: 1px solid var(--border-strong); } .btn-secondary:hover { border-color: var(--ink); }
-  .proof { margin-top: 1.75rem; font-size: 0.82rem; color: var(--muted); font-weight: 400; }
-  .proof strong { color: var(--ink); font-weight: 500; letter-spacing: -0.02em; }
-
-  .chat { margin: 3.5rem 0 0; background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 1.5rem; }
-  .chat .who { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0; color: var(--muted); margin: 0 0 0.35rem; }
-  .chat .who.r { text-align: right; }
-  .msg { max-width: 82%; padding: 0.7rem 1rem; border-radius: 12px; font-size: 0.92rem; line-height: 1.5; margin-bottom: 0.9rem; }
-  .me { margin-left: auto; background: var(--ink); color: #f5f5f3; border-bottom-right-radius: 4px; }
-  .ai { background: var(--bg); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
-  .ai b { font-weight: 500; font-variant-numeric: tabular-nums; }
-  .tool { font-size: 0.68rem; color: var(--muted); margin: -0.4rem 0 0.9rem 0.25rem; }
-  .tool code { font-size: 0.66rem; color: var(--dim); }
-  .tool .dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--live); margin-right: 0.45rem; vertical-align: middle; }
-
-  section { padding: 4.5rem 0; border-top: 1px solid var(--border); }
-  @media (min-width: 768px) { section { padding: 5.5rem 0; } }
-  .eyebrow { font-size: 0.65rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0; color: var(--muted); margin-bottom: 1.5rem; }
-  .eyebrow.pill { display: inline-block; font-family: 'IBM Plex Mono', monospace; border: 1px solid var(--border); border-radius: 999px; padding: 0.3rem 0.7rem; color: var(--dim); }
-  h2 { font-size: clamp(1.5rem, 2.8vw, 2.2rem); font-weight: 500; letter-spacing: -0.025em; line-height: 1.15; max-width: 700px; margin-bottom: 1rem; }
-  .section-subtitle { font-size: 0.95rem; color: var(--dim); max-width: 580px; font-weight: 400; line-height: 1.6; }
-
-  .steps { display: grid; grid-template-columns: 1fr; gap: 1rem; margin-top: 2.5rem; }
-  @media (min-width: 768px) { .steps { grid-template-columns: 1fr 1fr 1fr; } }
-  .step { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; }
-  .step .n { font-size: 0.65rem; color: var(--accent); font-weight: 500; margin-bottom: 0.9rem; }
-  .step h3 { font-size: 0.9rem; font-weight: 500; margin-bottom: 0.5rem; letter-spacing: -0.01em; }
-  .step p { font-size: 0.82rem; color: var(--dim); font-weight: 400; line-height: 1.55; }
-  .step code { font-size: 0.74rem; color: var(--ink); }
-
-  /* ---- Motion (transitions.dev conventions: t-* classes, :root tokens,
-         blur carried through the move, reduced-motion guard at the bottom) ---- */
-  .t-reveal { opacity: 0; transform: translateY(var(--t-distance)); filter: blur(var(--t-blur));
-    transition: opacity var(--t-dur) var(--t-ease), transform var(--t-dur) var(--t-ease), filter var(--t-dur) var(--t-ease);
-    transition-delay: calc(var(--t-index, 0) * var(--t-stagger)); will-change: transform, opacity, filter; }
-  .t-reveal[data-inview="true"] { opacity: 1; transform: translateY(0); filter: blur(0); }
-
-  /* Digit pop-in, from transitions.dev */
-  @keyframes t-digit-pop-in {
-    0%   { transform: translate(calc(var(--digit-distance) * var(--digit-dir-x)), calc(var(--digit-distance) * var(--digit-dir-y)));
-           opacity: 0; filter: blur(var(--digit-blur)); }
-    100% { transform: translate(0, 0); opacity: 1; filter: blur(0); }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --bg: #000000; --alt: #101012; --tile: #1c1c1e; --ink: #f5f5f7; --dim: #a1a1a6; --faint: #86868b;
+      --line: #38383a; --link: #2997ff; --btn: #0071e3; --btn-ink: #ffffff; --soft-btn: #2c2c2e;
+      --nav: rgba(22, 22, 23, 0.78); --ok: #30d158; --warn: #ff9f0a; --seg-pill: #636366;
+    }
   }
-  .t-digit-group { display: inline-flex; align-items: baseline; }
-  .t-digit { display: inline-block; will-change: transform, opacity, filter; }
-  .t-digit-group.is-animating .t-digit { animation: t-digit-pop-in var(--digit-dur) var(--digit-ease) both; }
-  .t-digit-group.is-animating .t-digit[data-stagger="1"] { animation-delay: var(--digit-stagger); }
-  .t-digit-group.is-animating .t-digit[data-stagger="2"] { animation-delay: calc(var(--digit-stagger) * 2); }
-
-  /* Scatter: cards drifting around a centred statement */
-  @keyframes t-drift { 0%, 100% { transform: translateY(0) rotate(var(--rot, 0deg)); } 50% { transform: translateY(-9px) rotate(var(--rot, 0deg)); } }
-  .scatter { position: relative; margin: 3.5rem auto 0; max-width: 980px; min-height: 420px; display: grid; place-items: center; }
-  .scatter-text { font-size: clamp(1.6rem, 3.4vw, 2.4rem); font-weight: 500; line-height: 1.2; letter-spacing: -0.03em; text-align: center; max-width: 30rem; position: relative; z-index: 2; }
-  .scatter-text .sub { display: block; font-size: 0.9rem; font-weight: 400; color: var(--dim); margin-top: 1.1rem; letter-spacing: 0; }
-  .chip { position: absolute; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
-    padding: 0.6rem 0.8rem; box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 10px 30px rgba(0,0,0,0.05);
-    font-size: 0.72rem; line-height: 1.35; animation: t-drift var(--dur, 7s) ease-in-out infinite; animation-delay: var(--delay, 0s); }
-  .chip .k { color: var(--muted); font-size: 0.62rem; display: block; margin-bottom: 0.15rem; }
-  .chip .v { font-weight: 500; font-variant-numeric: tabular-nums; }
-  .chip .v.low { color: var(--low); } .chip .v.high { color: var(--high); }
-  .chip.mono { font-family: 'IBM Plex Mono', monospace; font-size: 0.66rem; color: var(--dim); }
-  .chip.mono i { display: inline-block; width: 5px; height: 5px; border-radius: 50%; background: var(--live); margin-right: 0.4rem; vertical-align: middle; }
-  .c1 { top: 4%;  left: 2%;  --rot: -3deg; --dur: 7.5s; }
-  .c2 { top: 16%; right: 1%; --rot: 2.5deg; --dur: 8.5s; --delay: .6s; }
-  .c3 { bottom: 16%; left: 6%; --rot: 2deg; --dur: 9s; --delay: 1.2s; }
-  .c4 { bottom: 6%; right: 8%; --rot: -2deg; --dur: 8s; --delay: .3s; }
-  .c5 { top: 42%; left: -1%; --rot: 1.5deg; --dur: 9.5s; --delay: .9s; }
-  .c6 { top: 46%; right: -2%; --rot: -2.5deg; --dur: 7.8s; --delay: 1.6s; }
-  @media (max-width: 860px) {
-    .scatter { min-height: 0; display: flex; flex-direction: column; gap: 0.6rem; }
-    .scatter-text { order: -1; margin-bottom: 1rem; }
-    .chip { position: static; animation: none; width: 100%; }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #000000; --alt: #101012; --tile: #1c1c1e; --ink: #f5f5f7; --dim: #a1a1a6; --faint: #86868b;
+    --line: #38383a; --link: #2997ff; --btn: #0071e3; --btn-ink: #ffffff; --soft-btn: #2c2c2e;
+    --nav: rgba(22, 22, 23, 0.78); --ok: #30d158; --warn: #ff9f0a; --seg-pill: #636366;
   }
+  html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Inter", "Helvetica Neue", Arial, sans-serif; background: var(--bg); color: var(--ink); font-size: 17px; line-height: 1.47; }
+  .mono, code { font-family: "SF Mono", ui-monospace, "JetBrains Mono", Menlo, monospace; }
+  a { color: var(--link); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  a:focus-visible, button:focus-visible, summary:focus-visible { outline: 2px solid var(--btn); outline-offset: 3px; border-radius: 6px; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding-inline: 22px; }
+  .narrow { max-width: 760px; margin-inline: auto; }
 
-  /* How it works: three visual-led columns, then a CTA flanked by dashed rules */
-  .how-head { text-align: center; max-width: 640px; margin: 0 auto; }
-  .how-head .eyebrow { margin-bottom: 1rem; }
-  .how-head h2 { margin: 0 auto 1rem; max-width: none; font-size: clamp(1.9rem, 3.8vw, 2.8rem); font-weight: 500; }
-  .how-head .section-subtitle { margin: 0 auto; }
-  /* Alternating panel / text rows, after Zaro; numbered badge after Superpower. */
-  .how { display: flex; flex-direction: column; gap: 4.5rem; margin-top: 4rem; }
-  .how-col { display: grid; grid-template-columns: 1fr; gap: 1.25rem; align-items: center; }
-  @media (min-width: 820px) {
-    .how-col { grid-template-columns: 1.05fr 0.95fr; gap: 3.5rem; }
-    .how-col:nth-child(even) .how-visual { order: 2; }
-    .how-col:nth-child(even) .how-body { order: 1; }
-  }
-  .how-visual { position: relative; aspect-ratio: 4 / 3; background: var(--panel); border-radius: 18px; padding: 2.75rem 1.75rem 2rem; display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
-  .how-visual .badge { position: absolute; top: 0.9rem; left: 0.9rem; width: 1.55rem; height: 1.55rem; border-radius: 8px;
-    background: rgba(255,255,255,0.7); color: var(--dim); display: grid; place-items: center;
-    font-size: 0.7rem; font-weight: 500; font-variant-numeric: tabular-nums; }
-  .how-body h3 { font-size: clamp(1.15rem, 1.9vw, 1.5rem); font-weight: 500; letter-spacing: -0.025em; margin-bottom: 0.65rem; }
-  .how-body p { font-size: 0.95rem; color: var(--dim); font-weight: 400; line-height: 1.65; max-width: 30rem; }
-  /* the mocks can breathe now that a row is theirs */
-  .how-visual .mock pre { font-size: 0.68rem; padding: 0.9rem; }
-  .how-visual .mm { font-size: 0.8rem; }
-  .how-visual .mm.tool { font-size: 0.68rem; }
-  .how-visual .mock-row { font-size: 0.74rem; }
-  .how-visual .mock-schema .mock-bar b { font-size: 0.74rem; }
-  .how-visual .mock-foot { font-size: 0.68rem; }
-  .how-visual .mock-row em { font-size: 0.68rem; }
-  .how-cta { display: flex; align-items: center; justify-content: center; gap: 0.75rem; margin-top: 3.5rem; }
-  .how-cta::before, .how-cta::after { content: ""; flex: 1 1 0; border-top: 1px dashed var(--border-strong); }
-  @media (max-width: 520px) { .how-cta { flex-wrap: wrap; } .how-cta::before, .how-cta::after { display: none; } }
+  /* Nav */
+  .nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10; background: var(--nav); backdrop-filter: saturate(180%) blur(20px); -webkit-backdrop-filter: saturate(180%) blur(20px); border-bottom: 1px solid color-mix(in srgb, var(--line) 60%, transparent); }
+  .nav .wrap { height: 52px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .brand { display: flex; align-items: center; gap: 9px; color: var(--ink); font-weight: 700; font-size: 18px; }
+  .brand:hover { text-decoration: none; }
+  .mark { width: 26px; height: 26px; display: block; flex: none; }
+  .mark rect { fill: var(--ink); } .mark path { fill: var(--bg); }
+  .nav nav { display: flex; align-items: center; gap: 26px; font-size: 13px; }
+  .nav nav a { color: var(--ink); opacity: 0.85; }
+  .nav nav a:hover { opacity: 1; text-decoration: none; }
+  .nav .cta { background: var(--btn); color: var(--btn-ink); opacity: 1; padding: 5px 12px; border-radius: 980px; font-weight: 500; }
+  @media (max-width: 700px) { .nav nav a:not(.cta) { display: none; } }
 
-  /* The three mocks inside the panels */
-  .mock { background: var(--bg-card); border: 1px solid rgba(0,0,0,0.05); border-radius: 10px; text-align: left; overflow: hidden; }
-  .mock-bar { display: flex; align-items: center; gap: 0.3rem; padding: 0.5rem 0.7rem; border-bottom: 1px solid var(--border); }
-  .mock-bar span { width: 7px; height: 7px; border-radius: 50%; background: var(--border-strong); }
-  .mock-bar em { font-style: normal; font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem; color: var(--muted); margin-left: 0.4rem; }
-  .mock pre { font-family: 'IBM Plex Mono', monospace; font-size: 0.57rem; line-height: 1.75; color: var(--dim); padding: 0.7rem; overflow: hidden; }
-  .mock pre b { color: var(--ink); font-weight: 500; }
-  /* No uniform gap: a tool line belongs to the reply beneath it, so it hugs
-     that bubble and the space falls between turns instead. */
-  .mock-chat { background: none; border: 0; display: flex; flex-direction: column; gap: 0; }
-  .mock-chat > * { margin-bottom: 0.8rem; }
-  .mock-chat > .mm.tool { margin-bottom: 0.3rem; }
-  .mock-chat > :last-child { margin-bottom: 0; }
-  .mm { font-size: 0.68rem; line-height: 1.45; padding: 0.45rem 0.65rem; border-radius: 9px; }
-  .mm.me { background: var(--ink); color: #f5f5f3; align-self: flex-end; border-bottom-right-radius: 3px; max-width: 88%; }
-  .mm.ai { background: var(--bg-card); border: 1px solid var(--border); border-bottom-left-radius: 3px; max-width: 92%; }
-  .mm.ai b { font-weight: 500; }
-  .mm.tool { font-family: 'IBM Plex Mono', monospace; font-size: 0.58rem; color: var(--muted); padding: 0 0.2rem; display: flex; align-items: center; gap: 0.35rem; }
-  .mm.tool i { width: 5px; height: 5px; border-radius: 50%; background: var(--live); flex: none; }
-  /* A dataset's schema: the column names, their types and units, and the real
-     coverage window - which is what the copy beside it promises. */
-  .mock-schema .mock-bar { justify-content: space-between; }
-  .mock-schema .mock-bar b { font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem; font-weight: 500; color: var(--ink); }
-  .mock-row { display: flex; justify-content: space-between; align-items: baseline; gap: 0.75rem; padding: 0.34rem 0.7rem; font-size: 0.62rem; }
-  .mock-row:not(:last-of-type) { border-bottom: 1px solid var(--border); }
-  .mock-row span { font-family: 'IBM Plex Mono', monospace; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .mock-row em { font-style: normal; color: var(--muted); flex: none; font-size: 0.57rem; }
-  .mock-foot { padding: 0.45rem 0.7rem; border-top: 1px solid var(--border); background: var(--bg); font-size: 0.57rem; color: var(--muted); }
+  /* Buttons */
+  .btns { display: flex; gap: 14px; align-items: center; justify-content: center; flex-wrap: wrap; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; padding: 12px 22px; border-radius: 980px; font-size: 17px; font-weight: 500; transition: background 0.2s; }
+  .btn:hover { text-decoration: none; }
+  .btn.primary { background: var(--btn); color: var(--btn-ink); }
+  .btn.primary:hover { background: #0077ed; }
+  .btn.soft { background: var(--soft-btn); color: var(--ink); }
+  .more { font-size: 17px; }
+  
 
-  .asks { list-style: none; display: grid; grid-template-columns: 1fr; gap: 0.75rem; margin-top: 2.5rem; }
-  @media (min-width: 640px) { .asks { grid-template-columns: 1fr 1fr; } }
-  .asks li { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.25rem; font-size: 0.92rem; font-weight: 400; }
-  .asks li::before { content: "\201C"; color: var(--faint); } .asks li::after { content: "\201D"; color: var(--faint); }
+  /* Hero */
+  .hero { text-align: center; padding-block: 88px 0; }
+  .eyebrow { font-size: 17px; font-weight: 600; color: var(--dim); margin-bottom: 10px; }
+  .hero h1 { font-size: clamp(44px, 8vw, 80px); line-height: 1.05; font-weight: 700; text-wrap: balance; }
+  .hero .lede { font-size: clamp(19px, 2.2vw, 24px); line-height: 1.35; color: var(--dim); max-width: 700px; margin: 20px auto 30px; text-wrap: balance; }
+  .fine { font-size: 12px; color: var(--faint); margin-top: 18px; }
 
-  .facts { display: grid; grid-template-columns: 1fr; gap: 2rem 3rem; margin-top: 2.5rem; }
-  @media (min-width: 640px) { .facts { grid-template-columns: 1fr 1fr; } }
-  .fact h3 { font-size: 0.9rem; font-weight: 500; margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.6rem; letter-spacing: -0.01em; }
-  .fact h3::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--ok); flex: none; }
-  .fact p { font-size: 0.85rem; color: var(--dim); font-weight: 400; line-height: 1.55; }
-  .fact code { font-size: 0.78rem; color: var(--ink); }
-
-  .artifact { margin-top: 1.25rem; background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 1.5rem; }
-  .artifact .head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1.25rem; gap: 1rem; }
-  .artifact .head h4 { font-size: 0.95rem; font-weight: 500; letter-spacing: -0.01em; }
-  .artifact .head span { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0; color: var(--muted); }
-  .tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin-bottom: 1.5rem; }
-  .tile { border: 1px solid var(--border); border-radius: var(--radius); padding: 0.9rem 1rem; }
-  .tile .l { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0; color: var(--muted); margin-bottom: 0.3rem; }
-  .tile .v { font-size: 1.25rem; font-weight: 400; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
-  .tile .d { font-size: 0.68rem; color: var(--dim); font-weight: 400; margin-top: 0.15rem; }
-  .bars { display: grid; grid-template-columns: 8.5rem 1fr 5rem; gap: 0.55rem 0.9rem; align-items: center; font-size: 0.8rem; }
-  .bars .k { color: var(--dim); font-weight: 400; }
-  .bars .b { height: 8px; border-radius: 0 4px 4px 0; background: var(--border-strong); }
-  .bars .b.low { background: var(--low); } .bars .b.high { background: var(--high); }
-  .bars .v { text-align: right; font-variant-numeric: tabular-nums; font-size: 0.78rem; }
-  .artifact .note { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--border); font-size: 0.75rem; color: var(--muted); font-weight: 400; }
+  /* Hero stage: a Mac window with Claude */
+  .stage { margin-top: 56px; border-radius: 28px; padding: clamp(18px, 5vw, 64px) clamp(12px, 5vw, 64px) 0; background: radial-gradient(120% 90% at 50% 0%, #d9e6f7 0%, #eef0f5 45%, #f5f5f7 100%); overflow: hidden; }
+  :root[data-theme="dark"] .stage { background: radial-gradient(120% 90% at 50% 0%, #1b2a44 0%, #121418 50%, #101012 100%); }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .stage { background: radial-gradient(120% 90% at 50% 0%, #1b2a44 0%, #121418 50%, #101012 100%); } }
+  .window { max-width: 880px; margin: 0 auto; background: var(--tile); border-radius: 14px 14px 0 0; box-shadow: 0 30px 80px rgba(0, 0, 0, 0.18), 0 0 0 1px rgba(0, 0, 0, 0.06); text-align: left; overflow: hidden; }
+  .chrome { height: 38px; display: flex; align-items: center; gap: 8px; padding-inline: 14px; border-bottom: 1px solid var(--line); background: var(--alt); }
+  .chrome i { width: 12px; height: 12px; border-radius: 50%; background: #ff5f57; }
+  .chrome i:nth-child(2) { background: #febc2e; } .chrome i:nth-child(3) { background: #28c840; }
+  .chrome span { flex: 1; text-align: center; font-size: 13px; color: var(--dim); margin-right: 52px; }
+  .convo { padding: clamp(16px, 4vw, 32px); display: flex; flex-direction: column; gap: 12px; font-size: 15px; }
+  .bubble { max-width: 78%; padding: 10px 15px; border-radius: 18px; line-height: 1.4; }
+  .bubble.me { align-self: flex-end; background: var(--btn); color: #fff; border-bottom-right-radius: 6px; }
+  .bubble.ai { align-self: flex-start; background: var(--alt); border-bottom-left-radius: 6px; }
+  .bubble b { font-weight: 600; }
+  .tool { font-size: 12px; color: var(--faint); display: flex; align-items: center; gap: 6px; }
+  .tool::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--ok); }
+  .tool code { font-size: 12px; color: var(--dim); }
+  .rx { margin-top: 4px; }
+  .rx > .t-stagger-line { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+  .rx-row { display: grid; grid-template-columns: minmax(0, 1fr) 130px 96px; gap: 14px; align-items: center; padding: 12px 16px; border-top: 1px solid var(--line); font-size: 14px; }
+  .rx-row:first-child { border-top: 0; font-size: 12px; color: var(--faint); padding-block: 9px; background: var(--alt); }
+  .rx-row small { display: block; color: var(--faint); font-size: 12px; }
+  .rx-row .date { text-align: right; font-variant-numeric: tabular-nums; color: var(--dim); }
+  .rx-row .date.low { color: var(--warn); font-weight: 600; }
+  .meter { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--dim); font-variant-numeric: tabular-nums; }
+  .meter .t { flex: 1; height: 5px; border-radius: 3px; background: var(--line); overflow: hidden; }
+  .meter .f { height: 100%; background: var(--ink); border-radius: 3px; }
+  .meter .f.low { background: var(--warn); }
   @media (max-width: 640px) {
-    .tiles { grid-template-columns: 1fr; gap: 0.5rem; }
-    .tile { padding: 0.75rem 0.9rem; } .tile .v { font-size: 1.1rem; }
-    .artifact, .chat { padding: 1rem; } .msg { max-width: 92%; }
-    .bars { grid-template-columns: 6.5rem 1fr 4.5rem; }
+    .bubble { max-width: 92%; }
+    .rx-row { grid-template-columns: minmax(0, 1fr) 84px; }
+    .rx-row .meter { grid-column: 1 / -1; order: 3; }
+    .rx-row:first-child span:nth-child(2) { display: none; }
   }
 
-  /* Bento: the catalogue as figures rather than a list of paragraphs. */
-  .bento { display: grid; grid-template-columns: 1fr; gap: 0.75rem; margin-top: 2.5rem; }
-  @media (min-width: 700px) { .bento { grid-template-columns: repeat(4, 1fr); } }
-  /* `.cell`, not `.tile`: the hero artifact already owns `.tile .l`, which is
-     uppercase — reusing it here silently shouted every caption. */
-  .cell { background: var(--panel); border-radius: 16px; padding: 1.5rem 1.4rem; display: flex; flex-direction: column; justify-content: flex-end; min-height: 10.5rem; }
-  .cell .fig { font-size: clamp(2.1rem, 4vw, 3.1rem); font-weight: 500; letter-spacing: -0.04em; line-height: 1; font-variant-numeric: tabular-nums; margin-bottom: 0.55rem; }
-  .cell .fig small { font-size: 0.4em; font-weight: 400; color: var(--dim); margin-left: 0.15em; }
-  .cell .cap { font-size: 0.85rem; color: var(--dim); line-height: 1.5; }
-  .cell .cap b { color: var(--ink); font-weight: 500; }
-  .cell code { font-size: 0.78rem; color: var(--ink); }
-  @media (min-width: 700px) { .cell.wide { grid-column: span 2; } }
-  /* Stacked on a phone the min-height only buys dead space above each figure. */
-  @media (max-width: 699px) { .cell { min-height: 0; padding: 1.25rem 1.2rem; } }
-  .cell.solid { background: linear-gradient(135deg, #4f7cff 0%, #8b5cf6 38%, #22c1dc 72%, #34d399 100%); position: relative; overflow: hidden; }
-  .cell.solid::after { content: ""; position: absolute; inset: 0; pointer-events: none;
-    background: linear-gradient(180deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.04) 50%, rgba(255,255,255,0) 100%); }
-  .cell.solid > * { position: relative; z-index: 1; }
-  .cell.solid .fig, .cell.solid .cap b, .cell.solid code { color: #f5f5f7; }
-  .cell.solid .cap, .cell.solid .fig small { color: rgba(255,255,255,0.85); }
+  /* Sections */
+  section { padding-block: clamp(80px, 11vw, 140px); }
+  section.alt { background: var(--alt); }
+  .head { text-align: center; max-width: 760px; margin: 0 auto clamp(40px, 6vw, 64px); }
+  .head .eyebrow { font-size: 14px; }
+  .head h2 { font-size: clamp(34px, 5.4vw, 56px); line-height: 1.07; font-weight: 700; text-wrap: balance; }
+  .head p { font-size: clamp(17px, 1.9vw, 21px); color: var(--dim); margin-top: 16px; text-wrap: balance; }
+  .head .btns { margin-top: 26px; }
 
-  /* Accordion questions, so the section is scannable instead of a wall. */
-  .faq details { border-top: 1px solid var(--border); }
-  .faq details:last-of-type { border-bottom: 1px solid var(--border); }
-  .faq summary { list-style: none; cursor: pointer; padding: 1.15rem 2rem 1.15rem 0; position: relative; font-size: 0.95rem; font-weight: 500; letter-spacing: -0.01em; }
-  .faq summary::-webkit-details-marker { display: none; }
-  .faq summary::after { content: ""; position: absolute; right: 0.4rem; top: 50%; width: 9px; height: 9px; margin-top: -5px;
-    border-right: 1.5px solid var(--muted); border-bottom: 1.5px solid var(--muted); transform: rotate(45deg); transform-origin: center;
-    transition: transform 300ms var(--t-ease); }
-  .faq details[open] summary::after { transform: rotate(225deg); }
-  /* card-resize animates the disclosure height; panel-reveal carries the text
-     in behind it. Browsers without ::details-content simply open instantly. */
-  .faq details::details-content {
-    height: 0; overflow: hidden; content-visibility: hidden;
-    transition: height var(--resize-dur) var(--resize-ease),
-                content-visibility var(--resize-dur) allow-discrete;
+  /* How it works: three scenes */
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  @media (max-width: 900px) { .steps { grid-template-columns: 1fr; max-width: 520px; margin-inline: auto; gap: 40px; } }
+  .scene { aspect-ratio: 4 / 5; border-radius: 22px; position: relative; overflow: hidden; display: grid; place-items: center; max-width: 100%; }
+  .scene.s1 { background: radial-gradient(90% 70% at 30% 20%, #3a3f4b 0%, #16181d 60%, #0b0c0f 100%); }
+  .scene.s2 { background: radial-gradient(80% 60% at 70% 15%, #6d5dfc 0%, #2b2d9e 35%, #0e1238 75%, #070a1f 100%); }
+  .scene.s3 { background: radial-gradient(90% 70% at 50% 100%, #ff9a5a 0%, #e0566f 35%, #6b2a6e 70%, #2a1537 100%); }
+  .scene .glow { position: absolute; inset: auto -20% -30% -20%; height: 60%; background: radial-gradient(50% 50% at 50% 50%, rgba(255, 255, 255, 0.18), transparent 70%); pointer-events: none; }
+  .step-text { padding: 20px 4px 0; }
+  .step-text h3 { font-size: 19px; font-weight: 600; display: flex; gap: 8px; }
+  .step-text h3 span { color: var(--faint); font-variant-numeric: tabular-nums; }
+  .step-text p { color: var(--dim); font-size: 16px; margin-top: 6px; }
+
+  /* Scene 1: terminal */
+  .term { width: 82%; border-radius: 12px; background: rgba(28, 28, 32, 0.92); box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.08); color: #e6e6e6; font-size: 12px; line-height: 1.6; overflow: hidden; }
+  .term .bar { display: flex; gap: 6px; padding: 10px 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.07); }
+  .term .bar i { width: 9px; height: 9px; border-radius: 50%; background: #ff5f57; } .term .bar i:nth-child(2) { background: #febc2e; } .term .bar i:nth-child(3) { background: #28c840; }
+  .term pre { padding: 14px 14px 18px; white-space: pre-wrap; word-break: break-word; font-family: "SF Mono", ui-monospace, "JetBrains Mono", Menlo, monospace; }
+  .term .p { color: #7ee787; } .term .d { color: #8b949e; } .term .ok { color: #7ee787; }
+
+  /* Scene 2 and 3: phone */
+  .phone { width: 58%; aspect-ratio: 9 / 19; border-radius: 34px; background: #0a0a0a; padding: 7px; box-shadow: 0 30px 70px rgba(0, 0, 0, 0.55), inset 0 0 0 1.5px rgba(255, 255, 255, 0.14); transform: rotate(-4deg) translateY(6%); }
+  .s3 .phone { transform: rotate(3deg) translateY(8%); }
+  .screen { width: 100%; height: 100%; border-radius: 28px; overflow: hidden; background: #f2f2f7; position: relative; display: flex; flex-direction: column; color: #1d1d1f; }
+  .island { position: absolute; top: 8px; left: 50%; translate: -50% 0; width: 32%; height: 17px; border-radius: 10px; background: #000; }
+  .shot { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top; }
+  .screen.web { padding-top: 30px; background: #f4f4f4; }
+  .approve { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 34px 14px 14px; text-align: center; background: #fff; }
+  .approve .seal { width: 46px; height: 46px; border-radius: 50%; background: #0060e6; display: grid; place-items: center; }
+  .approve .seal svg { width: 22px; height: 22px; }
+  .approve strong { font-size: 14px; line-height: 1.25; }
+  .approve small { font-size: 11px; color: #6e6e73; line-height: 1.35; }
+  .approve .swipe { margin-top: auto; width: 100%; height: 38px; border-radius: 20px; background: #e9f0fd; position: relative; font-size: 11px; font-weight: 600; color: #0060e6; display: grid; place-items: center; }
+  .approve .swipe::before { content: ""; position: absolute; left: 4px; top: 4px; width: 30px; height: 30px; border-radius: 50%; background: #0060e6; }
+  .chat { flex: 1; display: flex; flex-direction: column; gap: 7px; padding: 36px 10px 12px; font-size: 10.5px; line-height: 1.35; }
+  .chat .bubble { max-width: 86%; padding: 7px 10px; border-radius: 14px; }
+  .chat .bubble.ai { background: #fff; }
+  .chat .tool { font-size: 9px; color: #86868b; } .chat .tool code { font-size: 9px; color: #6e6e73; }
+
+  /* What it reads: bento */
+  .bento { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; }
+  .tile { background: var(--tile); border-radius: 22px; padding: 30px; display: flex; flex-direction: column; gap: 8px; min-height: 220px; }
+  .tile .da { font-size: 14px; color: var(--faint); font-weight: 500; }
+  .tile h3 { font-size: 26px; line-height: 1.12; font-weight: 700; }
+  .tile p { color: var(--dim); font-size: 16px; }
+  .tile.big { grid-column: span 4; grid-row: span 2; }
+  .tile.side { grid-column: span 2; }
+  .tile.third { grid-column: span 2; }
+  .tile.half { grid-column: span 4; }
+  @media (max-width: 900px) { .bento { grid-template-columns: 1fr 1fr; } .tile.big, .tile.half { grid-column: span 2; } .tile.side, .tile.third { grid-column: span 1; } }
+  @media (max-width: 560px) { .bento { grid-template-columns: 1fr; } .tile.big, .tile.half, .tile.side, .tile.third { grid-column: span 1; } }
+  .meds { margin-top: auto; display: flex; flex-direction: column; border-top: 1px solid var(--line); }
+  .meds div { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 15px; }
+  .meds span { color: var(--faint); font-size: 13px; text-align: right; }
+  .tile .stat { color: var(--ink); font-size: clamp(44px, 5vw, 56px); font-weight: 700; line-height: 1; margin-top: auto; font-variant-numeric: tabular-nums; }
+  .tile .stat small { font-size: 17px; font-weight: 500; color: var(--dim); margin-left: 6px; }
+
+  /* Privacy */
+  .privacy-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px 40px; }
+  @media (max-width: 900px) { .privacy-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px) { .privacy-grid { grid-template-columns: 1fr; } }
+  .fact svg { width: 30px; height: 30px; margin-bottom: 14px; }
+  .fact svg * { stroke: var(--ink); }
+  .fact h3 { font-size: 19px; font-weight: 600; margin-bottom: 6px; }
+  .fact p { color: var(--dim); font-size: 16px; }
+
+  /* Two ways to run */
+  .ways { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 760px) { .ways { grid-template-columns: 1fr; } }
+  .way { background: var(--tile); border-radius: 22px; padding: 34px; display: flex; flex-direction: column; gap: 10px; }
+  .way .da { font-size: 14px; color: var(--faint); font-weight: 500; }
+  .way h3 { font-size: 28px; line-height: 1.1; font-weight: 700; }
+  .way p { color: var(--dim); font-size: 16px; }
+  .way pre { margin-top: 10px; background: var(--alt); border-radius: 12px; padding: 14px 16px; overflow-x: auto; font-size: 13px; line-height: 1.6; }
+  .way ul { list-style: none; display: flex; flex-direction: column; gap: 6px; margin-top: 6px; font-size: 15px; }
+  .way li { display: flex; gap: 10px; }
+  .way li::before { content: "✓"; color: var(--ok); font-weight: 600; }
+
+  /* FAQ */
+  .faq { max-width: 760px; margin: 0 auto; border-top: 1px solid var(--line); }
+  details { border-bottom: 1px solid var(--line); }
+  summary { list-style: none; cursor: pointer; padding: 22px 0; font-size: 19px; font-weight: 600; display: flex; justify-content: space-between; gap: 20px; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; font-weight: 400; font-size: 24px; line-height: 1; color: var(--dim); transition: transform 0.2s; }
+  details[open] summary::after { transform: rotate(45deg); }
+  details p { color: var(--dim); padding: 0 0 22px; max-width: 64ch; }
+
+  /* Closing + footer */
+  .closing { text-align: center; }
+  .closing h2 { font-size: clamp(34px, 5.4vw, 56px); line-height: 1.07; font-weight: 700; margin-bottom: 26px; text-wrap: balance; }
+  footer { background: var(--alt); padding-block: 22px 36px; font-size: 12px; color: var(--faint); }
+  footer .wrap > * + * { margin-top: 10px; }
+  footer .rule { border-top: 1px solid var(--line); padding-top: 14px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  footer a { color: var(--dim); }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+  /* ── Transitions from transitions.dev (free set), adapted to this page's tokens ── */
+  :root {
+    --stagger-dur: 500ms; --stagger-distance: 12px; --stagger-stagger: 40ms; --stagger-blur: 3px; --stagger-ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --think-swap: 150ms; --think-gap: 50ms; --think-distance: 8px; --think-blur: 2px; --think-shimmer: 2000ms; --think-ease: ease-in-out;
+    --stream-gap: 60ms; --stream-fade: 350ms; --stream-blur: 1px; --stream-ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --learn-shift: 2px; --learn-spread: 8deg; --learn-in: 350ms; --learn-out: 350ms; --learn-ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --tabs-dur: 250ms; --tabs-ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --acc-expand: 250ms; --acc-collapse: 250ms; --acc-chevron: 250ms; --acc-ease: cubic-bezier(0.22, 1, 0.36, 1);
   }
-  .faq details[open]::details-content { height: auto; content-visibility: visible; }
-  .faq details p { padding: 0 2rem 1.25rem 0; margin-top: -0.25rem;
-    opacity: 0; transform: translateY(var(--panel-translate-y)); filter: blur(var(--panel-blur));
-    transition: opacity var(--panel-close-dur) var(--panel-ease),
-                transform var(--panel-close-dur) var(--panel-ease),
-                filter var(--panel-close-dur) var(--panel-ease); }
-  .faq details[open] p { opacity: 1; transform: translateY(0); filter: blur(0);
-    transition-duration: var(--panel-open-dur); }
 
-  /* Closing call to action. */
-  .closer { text-align: center; }
-  .closer h2 { margin: 0 auto 1rem; }
-  .closer .section-subtitle { margin: 0 auto 2rem; }
-  .closer .cta-row { justify-content: center; }
+  /* Texts reveal. Hidden start states apply only once script has run (.t-js). */
+  .t-js .t-stagger-line { opacity: 0; transform: translateY(var(--stagger-distance)); filter: blur(var(--stagger-blur)); }
+  .t-stagger-line { transition: opacity var(--stagger-dur) var(--stagger-ease), transform var(--stagger-dur) var(--stagger-ease), filter var(--stagger-dur) var(--stagger-ease); }
+  .t-stagger-line--2 { transition-delay: calc(var(--stagger-stagger) * 2); }
+  .t-stagger-line--3 { transition-delay: calc(var(--stagger-stagger) * 4); }
+  .t-stagger-line--4 { transition-delay: calc(var(--stagger-stagger) * 6); }
+  .t-js .t-stagger.is-shown .t-stagger-line { opacity: 1; transform: translateY(0); filter: blur(0); }
+  h1.t-stagger-line { display: block; }
 
-  .faq { margin-top: 2.5rem; max-width: 680px; }
-  .faq .q { border-top: 1px solid var(--border); padding: 1.25rem 0; }
-  .faq .q:last-child { border-bottom: 1px solid var(--border); }
-  .faq h3 { font-size: 0.95rem; font-weight: 500; letter-spacing: -0.01em; margin-bottom: 0.4rem; }
-  .faq p { font-size: 0.88rem; color: var(--dim); font-weight: 400; line-height: 1.6; }
-  .faq code { font-size: 0.8rem; color: var(--ink); }
-  .faq a, .fact a, .section-subtitle a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--border-strong); }
-  .fine { font-size: 0.82rem; color: var(--dim); font-weight: 400; line-height: 1.65; max-width: 680px; }
-  .fine p + p { margin-top: 0.85rem; } .fine strong { color: var(--ink); font-weight: 500; }
+  /* Thinking states: the tool line shimmers while "reading", then settles. */
+  .t-think { position: relative; display: inline-block; }
+  .t-think-sizer { display: block; visibility: hidden; white-space: nowrap; }
+  .t-think-text { position: absolute; top: 0; left: 0; right: 0; display: block; white-space: nowrap; color: var(--faint);
+    transition: transform var(--think-swap) var(--think-ease), filter var(--think-swap) var(--think-ease), opacity var(--think-swap) var(--think-ease); }
+  .t-think-text.is-thinking::before { content: attr(data-text); position: absolute; inset: 0; pointer-events: none;
+    background-image: linear-gradient(90deg, transparent 0%, transparent 40%, var(--ink) 50%, transparent 60%, transparent 100%);
+    background-size: 400% 100%; background-repeat: no-repeat; -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent;
+    animation: t-think-shimmer var(--think-shimmer) linear infinite; }
+  @keyframes t-think-shimmer { 0% { background-position: 100% 0; } 100% { background-position: 0% 0; } }
+  .t-think-text.is-exit { transform: translateY(calc(var(--think-distance) * -1)); filter: blur(var(--think-blur)); opacity: 0; }
+  .t-think-text.is-enter-start { transition: none; transform: translateY(var(--think-distance)); filter: blur(var(--think-blur)); opacity: 0; }
+  .t-think-text code { font-size: 12px; color: var(--dim); }
 
-  pre.cmd { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.25rem; margin-top: 1.5rem; overflow-x: auto; font-family: 'IBM Plex Mono', monospace; font-size: 0.78rem; line-height: 1.7; color: var(--ink); }
-  /* On a phone the comment line is the only thing that needs scrolling, so let
-     it wrap while the JSON keeps its shape. */
-  @media (max-width: 560px) { pre.cmd { font-size: 0.7rem; } pre.cmd .c { display: block; white-space: pre-wrap; } }
-  pre.cmd .c { color: var(--muted); }
+  /* Streaming text: the answer resolves word by word. */
+  .t-js .t-stream-w { opacity: 0; filter: blur(var(--stream-blur)); }
+  .t-stream-w { transition: opacity var(--stream-fade) var(--stream-ease), filter var(--stream-fade) var(--stream-ease); }
+  .t-js .t-stream-w.is-in { opacity: 1; filter: blur(0); }
 
-  footer { padding: 3rem 0; border-top: 1px solid var(--border); }
-  footer .container { display: flex; flex-direction: column; gap: 1rem; align-items: center; }
-  @media (min-width: 640px) { footer .container { flex-direction: row; justify-content: space-between; } }
-  footer p { font-size: 0.75rem; color: var(--muted); }
-  footer nav { gap: 1.25rem; } footer a { font-size: 0.75rem; color: var(--dim); text-decoration: none; } footer a:hover { color: var(--ink); }
+  /* Learn more hover: the chevron slides and spreads into an arrow. */
+  .t-learn { display: inline-flex; align-items: center; gap: 2px; }
+  .t-learn-chevron { display: inline-flex; transform: translateX(0); transition: transform var(--learn-out) var(--learn-ease); }
+  .t-learn-chevron svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
+  .t-learn-arm { transform-box: view-box; transform-origin: 10px 8px; vector-effect: non-scaling-stroke; transition: transform var(--learn-out) var(--learn-ease); }
+  .t-learn:hover .t-learn-chevron { transform: translateX(var(--learn-shift)); transition-duration: var(--learn-in); }
+  .t-learn:hover .t-learn-arm { transition-duration: var(--learn-in); }
+  .t-learn:hover .t-learn-arm-top { transform: rotate(var(--learn-spread)); }
+  .t-learn:hover .t-learn-arm-bot { transform: rotate(calc(var(--learn-spread) * -1)); }
+  .t-learn:hover { text-decoration: none; }
+
+  /* Tabs sliding: Local / Hosted. */
+  .seg-wrap { display: flex; justify-content: center; margin-bottom: 28px; }
+  .t-tabs { position: relative; display: inline-flex; align-items: center; gap: 3px; padding: 3px; border-radius: 48px; background: var(--soft-btn); }
+  .t-tab { position: relative; appearance: none; border: 0; background: transparent; height: 34px; padding: 4px 20px; font: inherit; font-size: 15px; font-weight: 500; color: var(--dim); cursor: pointer; border-radius: 48px; z-index: 1; transition: color var(--tabs-dur) var(--tabs-ease); }
+  .t-tab:not([aria-selected="true"]):hover, .t-tab[aria-selected="true"] { color: var(--ink); }
+  .t-tabs-pill { position: absolute; top: 3px; left: 0; height: 34px; width: 0; background: var(--seg-pill); border-radius: 48px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+    transform: translateX(0); transition: transform var(--tabs-dur) var(--tabs-ease), width var(--tabs-dur) var(--tabs-ease); z-index: 0; pointer-events: none; }
+  .t-js .ways { grid-template-columns: 1fr; max-width: 640px; margin-inline: auto; }
+  .way.is-entering { animation: way-in var(--stagger-dur) var(--stagger-ease); }
+  @keyframes way-in { from { opacity: 0; transform: translateY(var(--stagger-distance)); filter: blur(var(--stagger-blur)); } }
+
+  /* Accordion expand: FAQ. */
+  .t-acc { border-bottom: 1px solid var(--line); }
+  .t-acc-head { width: 100%; appearance: none; border: 0; background: none; color: var(--ink); cursor: pointer; text-align: left;
+    padding: 22px 0; font: inherit; font-size: 19px; font-weight: 600; display: flex; justify-content: space-between; align-items: center; gap: 20px; }
+  .t-acc-chevron { display: inline-flex; flex: none; transform: scaleY(1); transform-origin: center; transition: transform var(--acc-chevron) var(--acc-ease); }
+  .t-acc-chevron svg { width: 18px; height: 18px; fill: none; stroke: var(--dim); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .t-acc-chevron path { vector-effect: non-scaling-stroke; }
+  .t-acc[data-open="true"] .t-acc-chevron { transform: scaleY(-1); }
+  .t-acc-panel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows var(--acc-collapse) var(--acc-ease); }
+  .t-acc[data-open="true"] .t-acc-panel { grid-template-rows: 1fr; transition: grid-template-rows var(--acc-expand) var(--acc-ease); }
+  .t-acc-panel-inner { overflow: hidden; opacity: 0; filter: blur(2px); transition: opacity var(--acc-collapse) var(--acc-ease), filter var(--acc-collapse) var(--acc-ease); }
+  .t-acc[data-open="true"] .t-acc-panel-inner { opacity: 1; filter: blur(0); transition: opacity var(--acc-expand) var(--acc-ease), filter var(--acc-expand) var(--acc-ease); }
+  .t-acc-panel-inner p { color: var(--dim); padding: 0 0 22px; max-width: 64ch; }
+
   @media (prefers-reduced-motion: reduce) {
-    .t-reveal { opacity: 1 !important; transform: none !important; filter: none !important; transition: none !important; }
-    .t-digit-group .t-digit { animation: none !important; }
-    .chip { animation: none !important; }
-    .faq details::details-content, .faq details p, .faq summary::after { transition: none !important; }
-    .faq details p { opacity: 1 !important; transform: none !important; filter: none !important; }
-    html { scroll-behavior: auto; }
+    .t-stagger-line, .t-think-text, .t-stream-w, .t-learn-chevron, .t-learn-arm, .t-tab, .t-tabs-pill, .t-acc-panel, .t-acc-panel-inner, .t-acc-chevron { transition: none !important; }
+    .t-think-text::before { display: none !important; }
+    .t-js .t-stagger-line, .t-js .t-stream-w { opacity: 1 !important; transform: none !important; filter: none !important; }
+    .way.is-entering { animation: none; }
   }
+
 </style>
 </head>
 <body>
-<header>
-  <div class="container">
-    <div class="navpill">
-    <a class="logo" href="/"><svg class="mark" viewBox="0 0 512 512" aria-hidden="true"><defs><linearGradient id="hc" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe14d"/><stop offset="0.42" stop-color="#ffc60a"/><stop offset="0.78" stop-color="#ffa608"/><stop offset="1" stop-color="#ff8c1a"/></linearGradient><linearGradient id="hg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0.62"/><stop offset="0.5" stop-color="#fff" stop-opacity="0.10"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs><rect width="512" height="512" rx="114" fill="url(#hc)"/><rect width="512" height="512" rx="114" fill="url(#hg)"/><path d="M300 54 L146 292 h94 l-28 166 L366 214 h-94 z" fill="#1a1205" stroke="#1a1205" stroke-width="18" stroke-linejoin="round"/></svg>EnergiMCP</a>
-    <nav>
-      <a href="#start">Get started</a>
-      <a href="#data">Data</a>
-      <a href="#questions">Questions</a>
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="EnergiMCP home"><svg class="mark" viewBox="0 0 512 512" aria-hidden="true"><defs><linearGradient id="hc" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe14d"/><stop offset="0.42" stop-color="#ffc60a"/><stop offset="0.78" stop-color="#ffa608"/><stop offset="1" stop-color="#ff8c1a"/></linearGradient><linearGradient id="hg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0.62"/><stop offset="0.5" stop-color="#fff" stop-opacity="0.10"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs><rect width="512" height="512" rx="114" fill="url(#hc)"/><rect width="512" height="512" rx="114" fill="url(#hg)"/><path d="M300 54 L146 292 h94 l-28 166 L366 214 h-94 z" fill="#1a1205" stroke="#1a1205" stroke-width="18" stroke-linejoin="round"/></svg>EnergiMCP</a>
+    <nav aria-label="Sections">
+      <a href="#how">How it works</a>
+      <a href="#reads">Data</a>
+      <a href="#open">Open</a>
+      <a href="#faq">Questions</a>
       <a href="https://github.com/manas-katyal/energimcp">GitHub</a>
+      <a class="cta" href="#run">Get started</a>
     </nav>
-    </div>
   </div>
 </header>
 
-<div class="hero">
-  <div class="container">
-    <h1 class="t-reveal" style="--t-index:0">Your AI now reads the grid.</h1>
-    <p class="subtitle t-reveal" style="--t-index:1">EnergiMCP connects Denmark's energy data to Claude, ChatGPT or any MCP client. Electricity prices, carbon intensity, consumption, production and gas — 100 datasets from Energinet. Read-only, no API key, on a server you run.</p>
-    <div class="cta-row t-reveal" style="--t-index:2">
-      <a class="btn btn-primary" href="#start">Get started &rarr;</a>
-      <a class="btn btn-secondary" href="https://github.com/manas-katyal/energimcp">View the code</a>
+<main id="top">
+  <div class="wrap hero t-stagger" id="hero">
+    <p class="eyebrow t-stagger-line">EnergiMCP</p>
+    <h1 class="t-stagger-line t-stagger-line--2">Denmark's energy data.<br>Now in your AI.</h1>
+    <p class="lede t-stagger-line t-stagger-line--3">Ask what power costs right now, how green the grid is, or what the wind did last January. 100 datasets from Energinet, read-only, no API key.</p>
+    <div class="btns t-stagger-line t-stagger-line--4">
+      <a class="btn primary" href="#run">Get started</a>
+      <a class="more t-learn" href="#how">How it works
+        <span class="t-learn-chevron" aria-hidden="true"><svg viewBox="0 0 16 16"><path class="t-learn-arm t-learn-arm-top" d="M6 4L10 8"/><path class="t-learn-arm t-learn-arm-bot" d="M10 8L6 12"/></svg></span>
+      </a>
     </div>
-    <p class="proof t-reveal" style="--t-index:3"><strong>Standard MCP</strong> &middot; Claude, ChatGPT, Cursor or a local model &middot; <strong>100 datasets</strong> from Energi Data Service &middot; <strong>No API key</strong> &middot; <strong>MIT</strong></p>
+    <p class="fine t-stagger-line t-stagger-line--4">Open public data from Energinet · MIT licence · Not affiliated with Energinet or Energi Data Service</p>
 
-    <div class="t-reveal chat">
-      <p class="who r">You</p>
-      <div class="msg me">When should I run the dishwasher today?</div>
-      <p class="who">Assistant</p>
-      <p class="tool"><span class="dot"></span><code>get_electricity_prices</code> &middot; DK2 &middot; today &middot; 96 periods</p>
-      <div class="msg ai">Wait until the afternoon. The cheapest quarter-hour is <b>14:15</b> at <b>0.91 kr/kWh</b>; the morning peak at 07:15 is <b>2.96 kr/kWh</b>, more than three times as much. Average across the day is 1.43 kr/kWh.</div>
-      <p class="who r">You</p>
-      <div class="msg me">Is that also the greenest time?</div>
-      <p class="who">Assistant</p>
-      <p class="tool"><span class="dot"></span><code>get_carbon_intensity</code> &middot; DK2 &middot; with forecast</p>
-      <div class="msg ai">Close enough. Carbon intensity is <b>128 g CO&#8322;/kWh</b> right now and the forecast bottoms out in the same afternoon window — solar is carrying the middle of the day, which is exactly why the price falls then.</div>
-
-      <div class="artifact">
-        <div class="head"><h4>DK2 &middot; day-ahead, 23 September 2026</h4><span>Spot price, excl. tariffs and VAT</span></div>
-        <div class="tiles">
-          <div class="tile"><div class="l">Cheapest</div><div class="v">0.91 kr</div><div class="d">14:15 &middot; per kWh</div></div>
-          <div class="tile"><div class="l">Average</div><div class="v">1.43 kr</div><div class="d">across 96 periods</div></div>
-          <div class="tile"><div class="l">Peak</div><div class="v">2.96 kr</div><div class="d">07:15 &middot; per kWh</div></div>
+    <div class="stage" role="figure" aria-label="Example: Claude answering from EnergiMCP">
+      <div class="window">
+        <div class="chrome"><i></i><i></i><i></i><span>Claude</span></div>
+        <div class="convo">
+          <div class="bubble me">When is power cheapest today?</div>
+          <p class="tool"><span class="t-think" id="think" role="status"><span class="t-think-sizer" aria-hidden="true">get_electricity_prices · DK2 · 96 periods</span><span class="t-think-text" data-text="get_electricity_prices · DK2 · 96 periods"><code>get_electricity_prices</code> · DK2 · 96 periods</span></span></p>
+          <div class="bubble ai t-stream" id="answer">Cheapest at <b>14:15</b>, 0.91 kr/kWh. The morning peak at <b>07:15</b> is <b>2.96 kr/kWh</b> — more than three times as much. Average across the day is <b>1.43 kr/kWh</b>.</div>
+          <div class="rx t-stagger" id="rx">
+            <div class="rx-row t-stagger-line"><div>14:15<small>cheapest</small></div><div class="meter"><div class="t"><div class="f low" style="width:26%"></div></div></div><div class="date low">0.91</div></div>
+            <div class="rx-row t-stagger-line"><div>04:00<small>night</small></div><div class="meter"><div class="t"><div class="f" style="width:38%"></div></div></div><div class="date">1.31</div></div>
+            <div class="rx-row t-stagger-line"><div>19:00<small>evening</small></div><div class="meter"><div class="t"><div class="f" style="width:59%"></div></div></div><div class="date">2.04</div></div>
+            <div class="rx-row t-stagger-line"><div>07:15<small>peak</small></div><div class="meter"><div class="t"><div class="f" style="width:100%"></div></div></div><div class="date">2.96</div></div>
+          </div>
         </div>
-        <div class="bars">
-          <div class="k">14:15 cheapest</div><div><div class="b low" style="width:31%"></div></div><div class="v">0.91 kr</div>
-          <div class="k">Day average</div><div><div class="b" style="width:48%"></div></div><div class="v">1.43 kr</div>
-          <div class="k">07:15 peak</div><div><div class="b high" style="width:100%"></div></div><div class="v">2.96 kr</div>
-        </div>
-        <p class="note">Real values read from the Day-Ahead Prices dataset. Spot price only — tariffs, taxes and VAT roughly double what a household pays, and grid tariffs are themselves time-of-day dependent.</p>
       </div>
     </div>
   </div>
-</div>
 
-<main>
-<section id="scale">
-  <div class="container">
-    <div class="scatter">
-        <div class="chip c1"><span class="k">DK1 · cheapest today</span><span class="v low">0.76 kr/kWh</span></div>
-        <div class="chip c2"><span class="k">Carbon intensity</span><span class="v">128 g CO&#8322;/kWh</span></div>
-        <div class="chip c3 mono"><i></i>PowerSystemRightNow · 1 min</div>
-        <div class="chip c4"><span class="k">Wind &amp; solar share</span><span class="v">25.8%</span></div>
-        <div class="chip c5"><span class="k">DK2 · peak 07:15</span><span class="v high">2.96 kr/kWh</span></div>
-        <div class="chip c6"><span class="k">Net import</span><span class="v">2,145 MW</span></div>
-      <p class="scatter-text t-reveal">
-        <span class="t-digit-group" id="ds"><span class="t-digit">1</span><span class="t-digit" data-stagger="1">0</span><span class="t-digit" data-stagger="2">0</span></span>
-        datasets, from the live grid to 2005.
-        <span class="sub">One minute resolution at the fast end, hourly settlement data back two decades at the other. All of it open, none of it behind a key.</span>
-      </p>
-    </div>
-  </div>
-</section>
-
-<section id="start">
-  <div class="container">
-    <div class="how-head t-reveal">
-      <div class="eyebrow pill">How EnergiMCP works</div>
-      <h2>How EnergiMCP works</h2>
-      <p class="section-subtitle">Energi Data Service is open public data, so there is no account, no key and no form. You add one line to your MCP client and start asking questions in plain language.</p>
-    </div>
-
-    <div class="how">
-      <div class="how-col t-reveal" style="--t-index:0">
-        <div class="how-visual">
-          <span class="badge">1</span>
-          <div class="mock">
-            <div class="mock-bar"><span></span><span></span><span></span><em>.mcp.json</em></div>
-            <pre>{
-  "mcpServers": {
-    "<b>energi</b>": {
-      "command": "npx",
-      "args": ["-y", "<b>energimcp</b>"]
-    }
-  }
-}</pre>
-          </div>
-        </div>
-        <div class="how-body">
-        <h3>Add it to your client</h3>
-        <p>One entry in Claude, ChatGPT, Cursor or any MCP client. It needs Node 24 and nothing else — no key to paste, no account to create.</p>
-        </div>
+  <section id="how">
+    <div class="wrap">
+      <div class="head">
+        <p class="eyebrow">How it works</p>
+        <h2>Three steps, no account.</h2>
+        <p>Energi Data Service is open public data, so there is nothing to register for. You add one line to your MCP client and start asking.</p>
+        <div class="btns"><a class="btn soft" href="#run">See the setup</a></div>
       </div>
-
-      <div class="how-col t-reveal" style="--t-index:1">
-        <div class="how-visual">
-          <span class="badge">2</span>
-          <div class="mock-chat">
-            <div class="mm me">When is power cheapest today?</div>
-            <div class="mm tool"><i></i>get_electricity_prices</div>
-            <div class="mm ai">Cheapest at <b>14:15</b>, 0.91 kr/kWh. The 07:15 peak is more than three times that.</div>
-            <div class="mm me">And the greenest?</div>
-            <div class="mm tool"><i></i>get_carbon_intensity</div>
-            <div class="mm ai">Close &mdash; the same afternoon window. Solar is carrying the middle of the day.</div>
+      <div class="steps">
+        <div>
+          <div class="scene s1" aria-hidden="true">
+            <div class="term">
+              <div class="bar"><i></i><i></i><i></i></div>
+              <pre><span class="p">$</span> npx -y energimcp
+<span class="ok">✓</span> energi connected
+<b>7 tools</b> <span class="d">· 3 prompts</span></pre>
+            </div>
+            <div class="glow"></div>
           </div>
+          <div class="step-text"><h3><span>1</span> Add it to your client</h3><p>One entry in Claude, ChatGPT, Cursor or any MCP client. Node 24 and nothing else — no key to paste, no account to create.</p></div>
         </div>
-        <div class="how-body">
-        <h3>Ask in plain language</h3>
-        <p>Prices, carbon intensity, wind share, what the grid is doing this minute. It picks the dataset, writes the query and reads the answer back.</p>
-        </div>
-      </div>
-
-      <div class="how-col t-reveal" style="--t-index:2">
-        <div class="how-visual">
-          <span class="badge">3</span>
-          <div class="mock mock-schema">
-            <div class="mock-bar"><em>describe_dataset</em><b>DayAheadPrices</b></div>
-            <div class="mock-row"><span>TimeUTC</span><em>datetime</em></div>
-            <div class="mock-row"><span>PriceArea</span><em>string</em></div>
-            <div class="mock-row"><span>DayAheadPriceDKK</span><em>number &middot; DKK/MWh</em></div>
-            <div class="mock-row"><span>DayAheadPriceEUR</span><em>number &middot; EUR/MWh</em></div>
-            <div class="mock-foot">15 min resolution &middot; 2025-10-01 &rarr; today</div>
+        <div>
+          <div class="scene s2" aria-hidden="true">
+            <div class="term">
+              <div class="bar"><i></i><i></i><i></i></div>
+              <pre><span class="d">you</span> When is power cheapest today?
+<span class="ok">●</span> <b>get_electricity_prices</b>
+<span class="d">claude</span> 14:15 — 0.91 kr/kWh</pre>
+            </div>
+            <div class="glow"></div>
           </div>
+          <div class="step-text"><h3><span>2</span> Ask in plain language</h3><p>Prices, carbon intensity, wind share, what the grid is doing this minute. It picks the dataset, writes the query and reads the answer back.</p></div>
         </div>
-        <div class="how-body">
-        <h3>Go as deep as you like</h3>
-        <p>Behind the shortcuts sit all 100 datasets, with their schemas, units and real coverage dates — down to five-minute data reaching back to 2005.</p>
+        <div>
+          <div class="scene s3" aria-hidden="true">
+            <div class="term">
+              <div class="bar"><i></i><i></i><i></i></div>
+              <pre><span class="p">describe_dataset</span> <b>DayAheadPrices</b>
+TimeUTC        <span class="d">datetime</span>
+PriceArea      <span class="d">string</span>
+DayAheadPriceDKK <span class="d">DKK/MWh</span>
+<span class="ok">15 min</span> <span class="d">· 2025-10-01 → today</span></pre>
+            </div>
+            <div class="glow"></div>
+          </div>
+          <div class="step-text"><h3><span>3</span> Go as deep as you like</h3><p>Behind the shortcuts sit all 100 datasets, with their schemas, units and real coverage dates — down to five-minute data reaching back to 2005.</p></div>
         </div>
       </div>
     </div>
+  </section>
 
-    <pre class="t-reveal cmd"><span class="c"># claude_desktop_config.json, or .mcp.json in your project</span>
-{
+  <section id="reads" class="alt">
+    <div class="wrap">
+      <div class="head">
+        <p class="eyebrow">The catalogue</p>
+        <h2>Everything Energinet publishes. Nothing invented.</h2>
+        <p>Electricity, gas, grid capacity and the balancing markets — the whole of Energi Data Service, with the retired datasets flagged rather than hidden.</p>
+      </div>
+      <div class="bento">
+        <div class="tile big">
+          <p class="da">The catalogue</p>
+          <h3>100 datasets</h3>
+          <p>71 transmission electricity, 15 gas, 10 distribution-level consumption and production, and 4 from Gas Storage Denmark.</p>
+        </div>
+        <div class="tile third"><p class="da">Fastest</p><h3 class="stat">1 min</h3><p>Live grid state, minute by minute.</p></div>
+        <div class="tile third"><p class="da">Deepest</p><h3 class="stat">2005</h3><p>Hourly settlement data, two decades back.</p></div>
+        <div class="tile half"><p class="da">Kept honest</p><h3>22 discontinued datasets, flagged not hidden</h3><p>They still answer with old rows. EnergiMCP says so and names the replacement, instead of letting last year's prices pass as today's.</p></div>
+        <div class="tile third"><p class="da">To set up</p><h3 class="stat">0</h3><p>Keys, accounts or forms.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="open">
+    <div class="wrap">
+      <div class="head">
+        <p class="eyebrow">Open by design</p>
+        <h2>Read-only, and built for the model.</h2>
+        <p>There is nothing private behind this server — it reads a public API. What it does add is the judgement an assistant needs to use that API well.</p>
+      </div>
+      <div class="privacy-grid">
+        <div class="fact"><h3>Read-only</h3><p>Every tool reads. The upstream API has no write endpoints at all.</p></div>
+        <div class="fact"><h3>Schemas, not guesswork</h3><p><code>describe_dataset</code> hands over every column with its type and unit, and the first and last timestamp that actually exist.</p></div>
+        <div class="fact"><h3>Rate limits respected</h3><p>Responses are cached for one update interval, so repeated questions are free and a limit is reported as something to wait out, not retry.</p></div>
+        <div class="fact"><h3>Summaries, not row dumps</h3><p>A year of five-minute data is 105,000 rows. Ask for a summary and get min, max, mean and sum per column instead.</p></div>
+        <div class="fact"><h3>Bulk stays out of the chat</h3><p><code>download_url</code> builds a CSV or Excel link for extracts too big to read aloud. Nothing is fetched to build it.</p></div>
+        <div class="fact"><h3>Spot is not your bill</h3><p>Prices exclude tariffs, taxes and VAT, which roughly double a household price — and the server says so rather than letting it pass.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="run" class="alt">
+    <div class="wrap">
+      <div class="head">
+        <p class="eyebrow">Setup</p>
+        <h2>Two ways to run it.</h2>
+        <p>On your own machine it needs no server at all. Hosted, it works from claude.ai and your phone.</p>
+      </div>
+      <div class="seg-wrap" id="segwrap" hidden>
+        <div class="t-tabs" role="tablist" aria-label="Where to run EnergiMCP">
+          <span class="t-tabs-pill" aria-hidden="true"></span>
+          <button class="t-tab" role="tab" id="tab-local" aria-controls="panel-local" aria-selected="true">On your machine</button>
+          <button class="t-tab" role="tab" id="tab-hosted" aria-controls="panel-hosted" aria-selected="false">On a server</button>
+        </div>
+      </div>
+      <div id="panel-local" role="tabpanel" aria-labelledby="tab-local" class="way">
+        <h3>Local, over stdio</h3>
+        <p>With Node 24 or newer, add this to <code>claude_desktop_config.json</code> or a project's <code>.mcp.json</code>. Nothing else to configure.</p>
+        <div class="term">
+          <div class="bar"><i></i><i></i><i></i></div>
+          <pre>{
   "mcpServers": {
     "energi": { "command": "npx", "args": ["-y", "energimcp"] }
   }
 }</pre>
-
-    <div class="t-reveal how-cta">
-      <a class="btn btn-primary" href="https://github.com/manas-katyal/energimcp">Get started &rarr;</a>
-      <a class="btn btn-secondary" href="https://github.com/manas-katyal/energimcp#tools">See the tools</a>
-    </div>
-  </div>
-</section>
-
-<section id="asks">
-  <div class="container">
-    <div class="eyebrow">What people ask it</div>
-    <h2>Questions that used to need a spreadsheet.</h2>
-    <ul class="t-reveal asks">
-      <li>When is power cheapest tomorrow in DK1?</li>
-      <li>How much of the grid is wind right now?</li>
-      <li>What was the carbon intensity when I charged the car last night?</li>
-      <li>Compare gas system balance this month with last year.</li>
-      <li>Which municipalities added the most solar capacity since 2016?</li>
-      <li>Is Denmark importing or exporting right now, and from where?</li>
-      <li>Plot hourly consumption per grid area for January.</li>
-      <li>What does the day-ahead price do on a windy Sunday?</li>
-    </ul>
-  </div>
-</section>
-
-<section id="data">
-  <div class="container">
-    <div class="eyebrow">The catalogue</div>
-    <h2>100 datasets, four publishers.</h2>
-    <p class="section-subtitle">Everything Energinet publishes through <a href="https://www.energidataservice.dk/">Energi Data Service</a>: 71 transmission-level electricity datasets, 15 gas, 10 distribution-level consumption and production, and 4 from Gas Storage Denmark.</p>
-    <div class="t-reveal bento">
-      <div class="cell wide solid">
-        <div class="fig">100</div>
-        <div class="cap"><b>datasets</b>, every one Energinet publishes — 71 transmission electricity, 15 gas, 10 distribution, 4 gas storage.</div>
+        </div>
       </div>
-      <div class="cell">
-        <div class="fig">1<small>min</small></div>
-        <div class="cap">Fastest resolution, on the live grid state.</div>
-      </div>
-      <div class="cell">
-        <div class="fig">2005</div>
-        <div class="cap">Earliest hourly settlement data.</div>
-      </div>
-      <div class="cell">
-        <div class="fig">0</div>
-        <div class="cap">Keys, accounts or forms. It is open data.</div>
-      </div>
-      <div class="cell">
-        <div class="fig">22</div>
-        <div class="cap">Discontinued datasets — <b>flagged, not hidden</b>, with their replacement named.</div>
-      </div>
-      <div class="cell wide">
-        <div class="cap"><b>Built for the model, not the dashboard.</b> <code>describe_dataset</code> hands over every column with its type and unit before a query is written; <code>summary</code> turns 105,000 rows into per-column statistics; <code>download_url</code> keeps bulk extracts out of the conversation entirely.</div>
+      <div id="panel-hosted" role="tabpanel" aria-labelledby="tab-hosted" class="way" hidden>
+        <h3>Hosted, over HTTP</h3>
+        <p>The same container runs anywhere. Add the endpoint as a custom connector in claude.ai — there is no authentication, because there are no secrets.</p>
+        <div class="btns" style="justify-content:flex-start">
+          <a class="btn primary" href="https://railway.com/new/template?template=https%3A%2F%2Fgithub.com%2Fmanas-katyal%2Fenergimcp" target="_blank" rel="noopener">Deploy on Railway</a>
+        </div>
+        <p class="fine">One click creates the container and a public URL in your own Railway account. Nothing is paid to us, and there is nothing to configure afterwards — no keys, no volumes.</p>
+        <div class="term">
+          <div class="bar"><i></i><i></i><i></i></div>
+          <pre><span class="ok">✓</span> deployed
+<span class="d">add this as a custom connector in claude.ai</span>
+<b>https://your-app.up.railway.app/mcp</b></pre>
+        </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<section id="questions">
-  <div class="container">
-    <div class="eyebrow">Questions</div>
-    <h2>Short answers.</h2>
-    <div class="t-reveal faq">
-      <details><summary>Do I need an API key?</summary><p>No. Energi Data Service is open data and needs no registration, no key and no contract. That is the whole setup story.</p></details>
-      <details><summary>Which assistants work?</summary><p>Any MCP client — Claude, ChatGPT, Cursor, Mistral or a local model. It speaks standard MCP over stdio, and streamable HTTP when you host it.</p></details>
-      <details><summary>Is this official?</summary><p>No. It is an independent open-source client for a public API, not affiliated with Energinet or Energi Data Service.</p></details>
-      <details><summary>Are these the prices I pay?</summary><p>No. Day-ahead spot prices exclude grid tariffs, taxes and VAT, which roughly double a Danish household bill. The tariffs themselves are in <code>DatahubPricelist</code> if you want to compute the real thing.</p></details>
-      <details><summary>Why does it cache?</summary><p>Rate limits are per dataset and deliberately tight: the platform expects about one request per update interval. Caching is what lets an agent ask follow-up questions without being blocked.</p></details>
-      <details><summary>Can it write anything?</summary><p>No. Every tool is read-only, and the upstream API has no write endpoints.</p></details>
+  <section id="faq">
+    <div class="wrap">
+      <div class="head"><p class="eyebrow">Questions</p><h2>Short answers.</h2></div>
+      <div class="faq">
+        <div class="t-acc" data-open="false">
+          <button class="t-acc-head" aria-expanded="false" aria-controls="a0">Do I need an API key?
+            <span class="t-acc-chevron" aria-hidden="true"></span>
+          </button>
+          <div class="t-acc-panel" id="a0"><div class="t-acc-panel-inner"><p>No. Energi Data Service is open public data — no registration, no key, no contract. That is the whole setup story.</p></div></div>
+        </div>
+        <div class="t-acc" data-open="false">
+          <button class="t-acc-head" aria-expanded="false" aria-controls="a1">Which assistants work?
+            <span class="t-acc-chevron" aria-hidden="true"></span>
+          </button>
+          <div class="t-acc-panel" id="a1"><div class="t-acc-panel-inner"><p>Any MCP client: Claude, ChatGPT, Cursor, Mistral or a local model. It speaks standard MCP over stdio, and streamable HTTP when hosted.</p></div></div>
+        </div>
+        <div class="t-acc" data-open="false">
+          <button class="t-acc-head" aria-expanded="false" aria-controls="a2">Is this official?
+            <span class="t-acc-chevron" aria-hidden="true"></span>
+          </button>
+          <div class="t-acc-panel" id="a2"><div class="t-acc-panel-inner"><p>No. It is an independent open-source client for a public API, not affiliated with Energinet or Energi Data Service.</p></div></div>
+        </div>
+        <div class="t-acc" data-open="false">
+          <button class="t-acc-head" aria-expanded="false" aria-controls="a3">Are these the prices I pay?
+            <span class="t-acc-chevron" aria-hidden="true"></span>
+          </button>
+          <div class="t-acc-panel" id="a3"><div class="t-acc-panel-inner"><p>No. Day-ahead spot prices exclude tariffs, taxes and VAT, which roughly double a Danish household bill. The tariffs themselves live in <code>DatahubPricelist</code>.</p></div></div>
+        </div>
+        <div class="t-acc" data-open="false">
+          <button class="t-acc-head" aria-expanded="false" aria-controls="a4">Why does it cache?
+            <span class="t-acc-chevron" aria-hidden="true"></span>
+          </button>
+          <div class="t-acc-panel" id="a4"><div class="t-acc-panel-inner"><p>Rate limits are per dataset and deliberately tight — the platform expects about one request per update interval. Caching is what lets an agent ask follow-up questions without being blocked.</p></div></div>
+        </div>
+        <div class="t-acc" data-open="false">
+          <button class="t-acc-head" aria-expanded="false" aria-controls="a5">Can it write anything?
+            <span class="t-acc-chevron" aria-hidden="true"></span>
+          </button>
+          <div class="t-acc-panel" id="a5"><div class="t-acc-panel-inner"><p>No. Every tool is read-only, and the upstream API has no write endpoints.</p></div></div>
+        </div>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<section id="open">
-  <div class="container">
-    <div class="eyebrow">Open source</div>
-    <h2>Software, not a service.</h2>
-    <p class="section-subtitle">There is no hosted version and nothing to sign up for. Run your own copy. MIT licence.</p>
-    <div class="fine" style="margin-top:1.5rem">
-      <p><strong>Disclaimer.</strong> Use at your own risk. The software is provided as is, without warranty of any kind, and the authors accept no liability for how it is used or for any decision taken on the basis of the data it returns. It is not affiliated with Energinet, Energi Data Service, Anthropic or any energy company. Data is published by Energinet under their own terms; check those before relying on it commercially.</p>
+  <section class="closing alt">
+    <div class="wrap">
+      <h2>Ask the grid anything.</h2>
+      <div class="btns">
+        <a class="btn primary" href="#run">Get started</a>
+        <a class="btn soft" href="https://github.com/manas-katyal/energimcp">View the code</a>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 </main>
 
-<section id="closer">
-  <div class="container closer t-reveal">
-    <div class="eyebrow pill">Open data, open source</div>
-    <h2>Ask the grid anything.</h2>
-    <p class="section-subtitle">One line in your MCP client and Denmark's entire energy record is a question away. No key, no account, no bill.</p>
-    <div class="cta-row">
-      <a class="btn btn-primary" href="https://github.com/manas-katyal/energimcp">Get started &rarr;</a>
-      <a class="btn btn-secondary" href="https://github.com/manas-katyal/energimcp#tools">See the tools</a>
+<footer>
+  <div class="wrap">
+    <p>EnergiMCP is an independent open-source project and is not affiliated with Energinet, Energi Data Service or Anthropic. Data is published by Energinet under their own terms; check those before relying on it commercially. Day-ahead spot prices exclude tariffs, taxes and VAT.</p>
+    <p><strong>Disclaimer.</strong> Use at your own risk. The software is provided as is, without warranty of any kind, and the authors accept no liability for how it is used or for any decision taken on the basis of the data it returns.</p>
+    <div class="rule">
+      <span>MIT licence</span>
+      <span><a href="https://github.com/manas-katyal/energimcp">GitHub</a> · <a href="https://www.energidataservice.dk/">Energi Data Service</a></span>
     </div>
   </div>
-</section>
-
-<footer>
-  <div class="container">
-    <p>EnergiMCP is an independent open-source project. Data from Energinet's Energi Data Service. MIT licence.</p>
-    <nav>
-      <a href="https://github.com/manas-katyal/energimcp">GitHub</a>
-      <a href="#start">Get started</a>
-      <a href="#data">Data</a>
-      <a href="#questions">Questions</a>
-      <a href="https://www.energidataservice.dk/">Energi Data Service</a>
-    </nav>
-  </div>
 </footer>
+
 <script>
-  (() => {
-    "use strict";
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const targets = document.querySelectorAll(".t-reveal");
+document.documentElement.classList.add("t-js");
 
-    // Without IntersectionObserver, or when motion is not wanted, everything is
-    // simply visible: the page must never depend on the animation running.
-    if (reduced || !("IntersectionObserver" in window)) {
-      targets.forEach((el) => el.setAttribute("data-inview", "true"));
-      return;
-    }
 
-    const io = new IntersectionObserver((entries) => {
-      for (const entry of entries) {
-        if (!entry.isIntersecting) continue;
-        entry.target.setAttribute("data-inview", "true");
-        io.unobserve(entry.target);   // reveal once, never re-hide on scroll back
-      }
-    }, { rootMargin: "0px 0px -12% 0px", threshold: 0.1 });
-    targets.forEach((el) => io.observe(el));
+(() => {
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const ms = (name, fb) => { const v = parseFloat(getComputedStyle(document.documentElement).getPropertyValue(name)); return Number.isFinite(v) ? v : fb; };
+  const wait = (t) => new Promise((r) => setTimeout(r, reduce ? 0 : t));
 
-    // The digit group pops in when the statement it sits inside arrives.
-    const digits = document.getElementById("ds");
-    if (digits) {
-      const dio = new IntersectionObserver((entries) => {
-        for (const entry of entries) {
-          if (!entry.isIntersecting) continue;
-          digits.classList.add("is-animating");
-          dio.disconnect();
-        }
-      }, { threshold: 0.6 });
-      dio.observe(digits);
-    }
-  })();
+  // Hero: staggered reveal on load.
+  const hero = document.getElementById("hero");
+  requestAnimationFrame(() => hero.classList.add("is-shown"));
+  // Belt and braces: the hero is invisible until this class lands, so never
+  // let a missed frame leave the page headless-blank. classList.add is idempotent.
+  setTimeout(() => hero.classList.add("is-shown"), 400);
+
+  // Hero chat: think, then stream the answer, then reveal the table.
+  const think = document.getElementById("think");
+  const answer = document.getElementById("answer");
+  const rx = document.getElementById("rx");
+  const settled = think.querySelector(".t-think-text");
+  const finalHTML = settled.innerHTML, finalText = settled.dataset.text;
+  const reading = "Reading day-ahead prices from Energi Data Service…";
+  settled.textContent = reading; settled.dataset.text = reading; settled.classList.add("is-thinking");
+
+  // Wrap the answer's words (keeping <b> emphasis) into streamable spans.
+  const spans = [];
+  (function wrap(node) {
+    [...node.childNodes].forEach((child) => {
+      if (child.nodeType === 3) {
+        const frag = document.createDocumentFragment();
+        child.textContent.split(/(\s+)/).forEach((part) => {
+          if (!part) return;
+          if (/^\s+$/.test(part)) return frag.appendChild(document.createTextNode(part));
+          const s = document.createElement("span"); s.className = "t-stream-w"; s.textContent = part; spans.push(s); frag.appendChild(s);
+        });
+        child.replaceWith(frag);
+      } else wrap(child);
+    });
+  })(answer);
+
+  async function play() {
+    await wait(1600);
+    const leaving = think.querySelector(".t-think-text");
+    leaving.classList.add("is-exit");
+    const next = document.createElement("span");
+    next.className = "t-think-text is-enter-start"; next.innerHTML = finalHTML; next.dataset.text = finalText;
+    think.appendChild(next);
+    await wait(ms("--think-gap", 50));
+    void next.offsetWidth; next.classList.remove("is-enter-start");
+    setTimeout(() => leaving.remove(), ms("--think-swap", 150) + 50);
+    await wait(250);
+    const gap = ms("--stream-gap", 60);
+    for (const s of spans) { s.classList.add("is-in"); await wait(gap); }
+    await wait(150);
+    rx.classList.add("is-shown");
+  }
+  const stage = document.querySelector(".stage");
+  new IntersectionObserver((entries, io) => {
+    if (entries.some((e) => e.isIntersecting)) { io.disconnect(); play(); }
+  }, { threshold: 0.35 }).observe(stage);
+
+  // Local / Hosted segmented control.
+  const segwrap = document.getElementById("segwrap");
+  const bar = segwrap.querySelector(".t-tabs"), pill = bar.querySelector(".t-tabs-pill");
+  const tabs = [...bar.querySelectorAll(".t-tab")];
+  segwrap.hidden = false;
+  const panelOf = (tab) => document.getElementById(tab.getAttribute("aria-controls"));
+  function moveTo(tab, animate) {
+    const prev = pill.style.transition;
+    if (!animate) pill.style.transition = "none";
+    pill.style.transform = `translateX(${tab.offsetLeft}px)`;
+    pill.style.width = `${tab.offsetWidth}px`;
+    if (!animate) { void pill.offsetWidth; pill.style.transition = prev; }
+  }
+  function select(tab, animate) {
+    tabs.forEach((t) => {
+      const on = t === tab;
+      t.setAttribute("aria-selected", String(on)); t.tabIndex = on ? 0 : -1;
+      const panel = panelOf(t); panel.hidden = !on;
+      if (on && animate) { panel.classList.remove("is-entering"); void panel.offsetWidth; panel.classList.add("is-entering"); }
+    });
+    moveTo(tab, animate);
+  }
+  tabs.forEach((tab, i) => {
+    tab.addEventListener("click", () => select(tab, true));
+    tab.addEventListener("keydown", (e) => {
+      if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+      const next = tabs[(i + (e.key === "ArrowRight" ? 1 : tabs.length - 1)) % tabs.length];
+      next.focus(); select(next, true);
+    });
+  });
+  select(tabs[0], false);
+  requestAnimationFrame(() => moveTo(tabs.find((t) => t.getAttribute("aria-selected") === "true"), false));
+  addEventListener("resize", () => moveTo(tabs.find((t) => t.getAttribute("aria-selected") === "true"), false));
+
+  // FAQ accordion.
+  document.querySelectorAll(".t-acc").forEach((acc) => {
+    const head = acc.querySelector(".t-acc-head");
+    head.addEventListener("click", () => {
+      const open = acc.getAttribute("data-open") === "true";
+      acc.setAttribute("data-open", String(!open));
+      head.setAttribute("aria-expanded", String(!open));
+    });
+  });
+})();
+
 </script>
 </body>
 </html>

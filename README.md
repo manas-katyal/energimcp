@@ -71,6 +71,12 @@ Hosting it is optional. The stdio server above is enough for a desktop client; d
 
 ### Railway
 
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/new/template?template=https%3A%2F%2Fgithub.com%2Fmanas-katyal%2Fenergimcp)
+
+One click creates the container, the build and a public domain in your own Railway account. There is nothing to configure afterwards: no API key, no volume, no environment variables. When it is up, add `https://<your-domain>/mcp` as a custom connector in claude.ai.
+
+Or from a clone:
+
 `.railway/railway.ts` declares the service and health-checks `/healthz`; the build comes from the `Dockerfile` at the repository root, which Railway picks up automatically. From a clone:
 
 ```bash
