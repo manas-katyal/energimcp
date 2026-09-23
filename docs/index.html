@@ -23,16 +23,16 @@
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
   [hidden] { display: none !important; }
   :root {
-    --bg: #ffffff; --alt: #f5f5f7; --tile: #ffffff; --ink: #1d1d1f; --dim: #6e6e73; --faint: #86868b;
-    --line: #d2d2d7; --link: #0066cc; --btn: #0071e3; --btn-ink: #ffffff; --soft-btn: #e8e8ed;
-    --nav: rgba(255, 255, 255, 0.78); --ok: #1d8348; --warn: #bf4800; --seg-pill: #ffffff;
+    --bg: #faf9f7; --alt: #f4f4f5; --tile: #ffffff; --ink: #0a0a0a; --dim: #5c5c5e; --faint: #8e8e93;
+    --line: #e8e8ea; --line-strong: #d4d4d8; --link: #0a0a0a; --btn: #0a0a0a; --btn-ink: #f5f5f3; --soft-btn: #f4f4f5;
+    --nav: rgba(255, 255, 255, 0.82); --ok: #0f7b4f; --warn: #c1352a; --seg-pill: #ffffff;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
       color-scheme: dark;
-      --bg: #000000; --alt: #101012; --tile: #1c1c1e; --ink: #f5f5f7; --dim: #a1a1a6; --faint: #86868b;
-      --line: #38383a; --link: #2997ff; --btn: #0071e3; --btn-ink: #ffffff; --soft-btn: #2c2c2e;
-      --nav: rgba(22, 22, 23, 0.78); --ok: #30d158; --warn: #ff9f0a; --seg-pill: #636366;
+      --bg: #0c0c0d; --alt: #161618; --tile: #1b1b1d; --ink: #f2f2f0; --dim: #a1a1a6; --faint: #7c7c82;
+      --line: #2a2a2d; --line-strong: #3a3a3e; --link: #f2f2f0; --btn: #f2f2f0; --btn-ink: #0c0c0d; --soft-btn: #232326;
+      --nav: rgba(27, 27, 29, 0.82); --ok: #3fbf85; --warn: #ef6b5f; --seg-pill: #3a3a3e;
     }
   }
   :root[data-theme="dark"] {
@@ -51,15 +51,15 @@
   .narrow { max-width: 760px; margin-inline: auto; }
 
   /* Nav */
-  .nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10; background: var(--nav); backdrop-filter: saturate(180%) blur(20px); -webkit-backdrop-filter: saturate(180%) blur(20px); border-bottom: 1px solid color-mix(in srgb, var(--line) 60%, transparent); }
-  .nav .wrap { height: 52px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-  .brand { display: flex; align-items: center; gap: 9px; color: var(--ink); font-weight: 700; font-size: 18px; }
+  .nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10; padding-block: 12px; }
+  .nav .wrap { display: flex; justify-content: center; }
+  .brand { display: flex; align-items: center; gap: 8px; color: var(--ink); font-weight: 500; font-size: 15px; padding: 4px 10px 4px 6px; }
   .brand:hover { text-decoration: none; }
-  .mark { width: 26px; height: 26px; display: block; flex: none; }
+  .mark { width: 22px; height: 22px; display: block; flex: none; }
   .mark rect { fill: var(--ink); } .mark path { fill: var(--bg); }
-  .nav nav { display: flex; align-items: center; gap: 26px; font-size: 13px; }
-  .nav nav a { color: var(--ink); opacity: 0.85; }
-  .nav nav a:hover { opacity: 1; text-decoration: none; }
+  .nav nav { display: flex; align-items: center; gap: 2px; font-size: 13px; }
+  .nav nav a { color: var(--dim); padding: 6px 11px; border-radius: 999px; transition: background 450ms var(--t-ease), color 300ms var(--t-ease); }
+  .nav nav a:hover { background: var(--alt); color: var(--ink); }
   .nav .cta { background: var(--btn); color: var(--btn-ink); opacity: 1; padding: 5px 12px; border-radius: 980px; font-weight: 500; }
   @media (max-width: 700px) { .nav nav a:not(.cta) { display: none; } }
 
@@ -301,11 +301,15 @@
     .way.is-entering { animation: none; }
   }
 
+  .nav .cta, .nav .cta:hover { background: var(--btn); color: var(--btn-ink); font-weight: 500; }
+  .navpill { display: flex; align-items: center; gap: 6px; padding: 5px 6px; border-radius: 999px; background: var(--nav); border: 1px solid var(--line);
+    backdrop-filter: saturate(180%) blur(14px); -webkit-backdrop-filter: saturate(180%) blur(14px); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 0, 0, 0.05); max-width: 100%; }
 </style>
 </head>
 <body>
 <header class="nav">
   <div class="wrap">
+    <div class="navpill">
     <a class="brand" href="#top" aria-label="EnergiMCP home"><svg class="mark" viewBox="0 0 512 512" aria-hidden="true"><defs><linearGradient id="hc" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe14d"/><stop offset="0.42" stop-color="#ffc60a"/><stop offset="0.78" stop-color="#ffa608"/><stop offset="1" stop-color="#ff8c1a"/></linearGradient><linearGradient id="hg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0.62"/><stop offset="0.5" stop-color="#fff" stop-opacity="0.10"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs><rect width="512" height="512" rx="114" fill="url(#hc)"/><rect width="512" height="512" rx="114" fill="url(#hg)"/><path d="M300 54 L146 292 h94 l-28 166 L366 214 h-94 z" fill="#1a1205" stroke="#1a1205" stroke-width="18" stroke-linejoin="round"/></svg>EnergiMCP</a>
     <nav aria-label="Sections">
       <a href="#how">How it works</a>
@@ -315,12 +319,12 @@
       <a href="https://github.com/manas-katyal/energimcp">GitHub</a>
       <a class="cta" href="#run">Get started</a>
     </nav>
+    </div>
   </div>
 </header>
 
 <main id="top">
   <div class="wrap hero t-stagger" id="hero">
-    <p class="eyebrow t-stagger-line">EnergiMCP</p>
     <h1 class="t-stagger-line t-stagger-line--2">Denmark's energy data.<br>Now in your AI.</h1>
     <p class="lede t-stagger-line t-stagger-line--3">Ask what power costs right now, how green the grid is, or what the wind did last January. 100 datasets from Energinet, read-only, no API key.</p>
     <div class="btns t-stagger-line t-stagger-line--4">
