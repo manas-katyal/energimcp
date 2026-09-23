@@ -313,6 +313,8 @@
 
   /* Tabs sliding: Local / Hosted. */
   .seg-wrap { display: flex; justify-content: center; margin-bottom: 28px; }
+  .t-tab { white-space: nowrap; }
+  @media (max-width: 480px) { .t-tabs { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; width: 100%; } .t-tab { padding: 4px 6px; font-size: 13px; min-width: 0; } }
   .t-tabs { position: relative; display: inline-flex; align-items: center; gap: 3px; padding: 3px; border-radius: 48px; background: var(--soft-btn); }
   .t-tab { position: relative; appearance: none; border: 0; background: transparent; height: 34px; padding: 4px 20px; font: inherit; font-size: 15px; font-weight: 500; color: var(--dim); cursor: pointer; border-radius: 48px; z-index: 1; transition: color var(--tabs-dur) var(--tabs-ease); }
   .t-tab:not([aria-selected="true"]):hover, .t-tab[aria-selected="true"] { color: var(--ink); }
@@ -548,8 +550,8 @@ DayAheadPriceDKK <span class="d">DKK/MWh</span>
         <div class="t-tabs" role="tablist" aria-label="Where to run EnergiMCP">
           <span class="t-tabs-pill" aria-hidden="true"></span>
           <button class="t-tab" role="tab" id="tab-claude" aria-controls="panel-claude" aria-selected="true">In Claude</button>
-          <button class="t-tab" role="tab" id="tab-local" aria-controls="panel-local" aria-selected="false">On your machine</button>
-          <button class="t-tab" role="tab" id="tab-hosted" aria-controls="panel-hosted" aria-selected="false">Host it yourself</button>
+          <button class="t-tab" role="tab" id="tab-local" aria-controls="panel-local" aria-selected="false">Local</button>
+          <button class="t-tab" role="tab" id="tab-hosted" aria-controls="panel-hosted" aria-selected="false">Self-host</button>
         </div>
       </div>
       <div id="panel-claude" role="tabpanel" aria-labelledby="tab-claude" class="way">
