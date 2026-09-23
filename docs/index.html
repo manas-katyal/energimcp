@@ -202,6 +202,14 @@
   .tile .da { font-size: 14px; color: var(--faint); font-weight: 500; }
   .tile h3 { font-size: 24px; line-height: 1.15; font-weight: 500; }
   .tile p { color: var(--dim); font-size: 16px; }
+  .tile.full { grid-column: 1 / -1; min-height: 0; }
+  .proj { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 16px; }
+  .proj th { text-align: right; font-weight: 500; color: var(--faint); font-size: 13px; padding: 0 0 8px 12px; }
+  .proj td { padding: 12px 0 12px 12px; border-top: 1px solid var(--line); text-align: right; font-variant-numeric: tabular-nums; color: var(--ink); }
+  .proj th:first-child, .proj td:first-child { text-align: left; padding-left: 0; }
+  .proj td small { display: block; color: var(--faint); font-size: 13px; }
+  .tile .src { font-size: 13px; color: var(--faint); margin-top: 8px; }
+  .tile .src a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
   .tile.big { grid-column: span 4; grid-row: span 2; }
   .tile.side { grid-column: span 2; }
   .tile.third { grid-column: span 2; }
@@ -505,7 +513,7 @@ DayAheadPriceDKK <span class="d">DKK/MWh</span>
       <div class="head">
         <p class="eyebrow">Kataloget</p>
         <h2>Alt hvad Energinet udgiver. Intet opfundet.</h2>
-        <p>El, gas, netkapacitet og balancemarkederne — hele Energi Data Service, med de udgåede datasæt markeret frem for skjult.</p>
+        <p>El, gas, netkapacitet og balancemarkederne — hele Energi Data Service, med de udgåede datasæt markeret frem for skjult. Og for at kigge frem: Energistyrelsens fremskrivning til 2050.</p>
       </div>
       <div class="bento">
         <div class="tile big">
@@ -517,6 +525,21 @@ DayAheadPriceDKK <span class="d">DKK/MWh</span>
         <div class="tile third"><p class="da">Dybest</p><h3 class="stat">2005</h3><p>Timeafregnede data, to årtier tilbage.</p></div>
         <div class="tile half"><p class="da">Holdt ærlig</p><h3>22 udgåede datasæt, markeret frem for skjult</h3><p>De svarer stadig med gamle rækker. EnergiMCP siger det og nævner afløseren, i stedet for at lade sidste års priser gå for at være dagens.</p></div>
         <div class="tile third"><p class="da">At sætte op</p><h3 class="stat">0</h3><p>Nøgler, konti eller formularer.</p></div>
+        <div class="tile full">
+          <p class="da">Kig frem</p>
+          <h3>Fremskrivninger til 2050</h3>
+          <p>Energinets data viser, hvad der er sket, og højst i morgen. <code>get_projections</code> viser, hvad Danmark planlægger efter: elforbrug til varmepumper, elbiler og datacentre, kapacitet for sol, vind og batterier, og brændsels- og CO2-priser, år for år.</p>
+          <table class="proj">
+            <thead><tr><th></th><th>2025</th><th>2030</th><th>2050</th></tr></thead>
+            <tbody>
+              <tr><td>Elbiler<small>elforbrug, TWh</small></td><td>1,5</td><td>3,8</td><td>8,5</td></tr>
+              <tr><td>Varmepumper<small>individuelle, elforbrug, TWh</small></td><td>3,0</td><td>4,1</td><td>6,0</td></tr>
+              <tr><td>Datacentre<small>elforbrug, TWh</small></td><td>1,3</td><td>6,0</td><td>35,9</td></tr>
+              <tr><td>Solceller<small>kapacitet, GW</small></td><td>4,1</td><td>22,9</td><td>35,4</td></tr>
+            </tbody>
+          </table>
+          <p class="src">Kilde: Energistyrelsen, <a href="https://ens.dk/analyser-og-statistik/analyseforudsaetninger-til-energinet" target="_blank" rel="noopener">Analyseforudsætninger til Energinet 2025</a>, grundforløb (datasæt 1. juli 2026). En fremskrivning, ikke målinger — og hvert svar siger, hvilken kilde tallet kommer fra.</p>
+        </div>
       </div>
     </div>
   </section>
@@ -604,6 +627,12 @@ DayAheadPriceDKK <span class="d">DKK/MWh</span>
             <span class="t-acc-chevron" aria-hidden="true"></span>
           </button>
           <div class="t-acc-panel" id="a0"><div class="t-acc-panel-inner"><p>Nej. Energi Data Service er åbne offentlige data — ingen registrering, ingen nøgle, ingen kontrakt. Det er hele opsætningen.</p></div></div>
+        </div>
+        <div class="t-acc" data-open="false">
+          <button class="t-acc-head" aria-expanded="false" aria-controls="a9">Hvor kommer tallene fra?
+            <span class="t-acc-chevron" aria-hidden="true"></span>
+          </button>
+          <div class="t-acc-panel" id="a9"><div class="t-acc-panel-inner"><p>To steder, og hvert svar siger hvilket. Priser, CO2, produktion og alt det andet, der allerede er sket, kommer fra Energinets Energi Data Service. Fremskrivningerne til 2050 kommer fra Energistyrelsens <a href="https://ens.dk/analyser-og-statistik/analyseforudsaetninger-til-energinet" target="_blank" rel="noopener">Analyseforudsætninger til Energinet</a>. Det første er målte og offentliggjorte data, det andet er planlægningsforudsætninger.</p></div></div>
         </div>
         <div class="t-acc" data-open="false">
           <button class="t-acc-head" aria-expanded="false" aria-controls="a1">Hvilke assistenter virker?

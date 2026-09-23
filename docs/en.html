@@ -202,6 +202,14 @@
   .tile .da { font-size: 14px; color: var(--faint); font-weight: 500; }
   .tile h3 { font-size: 24px; line-height: 1.15; font-weight: 500; }
   .tile p { color: var(--dim); font-size: 16px; }
+  .tile.full { grid-column: 1 / -1; min-height: 0; }
+  .proj { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 16px; }
+  .proj th { text-align: right; font-weight: 500; color: var(--faint); font-size: 13px; padding: 0 0 8px 12px; }
+  .proj td { padding: 12px 0 12px 12px; border-top: 1px solid var(--line); text-align: right; font-variant-numeric: tabular-nums; color: var(--ink); }
+  .proj th:first-child, .proj td:first-child { text-align: left; padding-left: 0; }
+  .proj td small { display: block; color: var(--faint); font-size: 13px; }
+  .tile .src { font-size: 13px; color: var(--faint); margin-top: 8px; }
+  .tile .src a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
   .tile.big { grid-column: span 4; grid-row: span 2; }
   .tile.side { grid-column: span 2; }
   .tile.third { grid-column: span 2; }
@@ -505,7 +513,7 @@ DayAheadPriceDKK <span class="d">DKK/MWh</span>
       <div class="head">
         <p class="eyebrow">The catalogue</p>
         <h2>Everything Energinet publishes. Nothing invented.</h2>
-        <p>Electricity, gas, grid capacity and the balancing markets — the whole of Energi Data Service, with the retired datasets flagged rather than hidden.</p>
+        <p>Electricity, gas, grid capacity and the balancing markets — the whole of Energi Data Service, with the retired datasets flagged rather than hidden. And to look ahead: the Danish Energy Agency's projection to 2050.</p>
       </div>
       <div class="bento">
         <div class="tile big">
@@ -517,6 +525,21 @@ DayAheadPriceDKK <span class="d">DKK/MWh</span>
         <div class="tile third"><p class="da">Deepest</p><h3 class="stat">2005</h3><p>Hourly settlement data, two decades back.</p></div>
         <div class="tile half"><p class="da">Kept honest</p><h3>22 discontinued datasets, flagged not hidden</h3><p>They still answer with old rows. EnergiMCP says so and names the replacement, instead of letting last year's prices pass as today's.</p></div>
         <div class="tile third"><p class="da">To set up</p><h3 class="stat">0</h3><p>Keys, accounts or forms.</p></div>
+        <div class="tile full">
+          <p class="da">Look ahead</p>
+          <h3>Projections to 2050</h3>
+          <p>Energinet's data shows what has happened, and at most tomorrow. <code>get_projections</code> shows what Denmark is planning for: electricity demand from heat pumps, EVs and data centres, solar, wind and battery capacity, and fuel and CO2 prices, year by year.</p>
+          <table class="proj">
+            <thead><tr><th></th><th>2025</th><th>2030</th><th>2050</th></tr></thead>
+            <tbody>
+              <tr><td>EVs<small>electricity demand, TWh</small></td><td>1.5</td><td>3.8</td><td>8.5</td></tr>
+              <tr><td>Heat pumps<small>individual, electricity demand, TWh</small></td><td>3.0</td><td>4.1</td><td>6.0</td></tr>
+              <tr><td>Data centres<small>electricity demand, TWh</small></td><td>1.3</td><td>6.0</td><td>35.9</td></tr>
+              <tr><td>Solar<small>capacity, GW</small></td><td>4.1</td><td>22.9</td><td>35.4</td></tr>
+            </tbody>
+          </table>
+          <p class="src">Source: Danish Energy Agency, <a href="https://ens.dk/analyser-og-statistik/analyseforudsaetninger-til-energinet" target="_blank" rel="noopener">Analyseforudsætninger til Energinet 2025</a>, base scenario (dataset of 1 July 2026). A projection, not measurements — and every answer says which source a number came from.</p>
+        </div>
       </div>
     </div>
   </section>
@@ -604,6 +627,12 @@ DayAheadPriceDKK <span class="d">DKK/MWh</span>
             <span class="t-acc-chevron" aria-hidden="true"></span>
           </button>
           <div class="t-acc-panel" id="a0"><div class="t-acc-panel-inner"><p>No. Energi Data Service is open public data — no registration, no key, no contract. That is the whole setup story.</p></div></div>
+        </div>
+        <div class="t-acc" data-open="false">
+          <button class="t-acc-head" aria-expanded="false" aria-controls="a9">Where do the numbers come from?
+            <span class="t-acc-chevron" aria-hidden="true"></span>
+          </button>
+          <div class="t-acc-panel" id="a9"><div class="t-acc-panel-inner"><p>Two places, and every answer says which. Prices, carbon, production and everything else that has already happened come from Energinet's Energi Data Service. The projections to 2050 come from the Danish Energy Agency's <a href="https://ens.dk/analyser-og-statistik/analyseforudsaetninger-til-energinet" target="_blank" rel="noopener">Analyseforudsætninger til Energinet</a>. The first is measured and published data; the second is planning assumptions.</p></div></div>
         </div>
         <div class="t-acc" data-open="false">
           <button class="t-acc-head" aria-expanded="false" aria-controls="a1">Which assistants work?
