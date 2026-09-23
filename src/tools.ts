@@ -4,11 +4,19 @@ import { config } from "./config.ts";
 import { eds, EdsError, type DatasetMeta, type QueryParams } from "./eds.ts";
 import { CatalogError, datasets, describeDataset, isDiscontinued, resolveDataset, searchDatasets, successors } from "./catalog.ts";
 import { cacheTtlFor, datasetCard, freshness, round3, summarize } from "./data.ts";
+import { projections, searchProjections, shapeTable, topics } from "./projections.ts";
 
 const json = (value: unknown) => ({ content: [{ type: "text" as const, text: JSON.stringify(value, null, 2) }] });
 const fail = (message: string) => ({ content: [{ type: "text" as const, text: message }], isError: true });
 
 class ToolError extends Error {}
+
+/**
+ * Every answer says where it came from, so a model can cite it and a reader
+ * can tell Energinet's published data from the Energy Agency's projections.
+ */
+const edsSource = (meta: Pick<DatasetMeta, "datasetName" | "organizationName">) =>
+  `Energinet, Energi Data Service, dataset ${meta.datasetName}: ${config.siteBase}/${meta.organizationName}/${meta.datasetName}`;
 
 const PUBLISHERS = ["tso-electricity", "tso-gas", "dso-electricity", "gas-storage-denmark"] as const;
 
@@ -163,6 +171,7 @@ export function registerTools(server: McpServer): void {
           : {}),
         ...(summary ? { summary: summarize(records) } : { records }),
         coverage: { data_from: fresh.data_from, data_to: fresh.data_to },
+        source: edsSource(meta),
       });
     }),
   );
@@ -254,6 +263,7 @@ export function registerTools(server: McpServer): void {
         timezone: "Danish local time",
         summary: byArea,
         ...(include_periods ? { periods: rows } : {}),
+        source: edsSource(meta),
       });
     }),
   );
@@ -299,6 +309,7 @@ export function registerTools(server: McpServer): void {
             }
           : null,
         readings: rows,
+        source: [edsSource(meta)],
       };
       if (!rows.length) out.note = "No readings in that window.";
       if (include_forecast) {
@@ -309,6 +320,7 @@ export function registerTools(server: McpServer): void {
           cacheTtlFor(progMeta),
         );
         const forecast = (prog.records ?? []).map(shape).filter((r) => r.g_co2_per_kwh !== null);
+        (out.source as string[]).push(edsSource(progMeta));
         out.forecast = forecast.length
           ? { periods: forecast.length, greenest: forecast.reduce((a, b) => (b.g_co2_per_kwh! < a.g_co2_per_kwh! ? b : a)), dirtiest: forecast.reduce((a, b) => (b.g_co2_per_kwh! > a.g_co2_per_kwh! ? b : a)), values: forecast }
           : { note: "No forecast available for that area right now." };
@@ -342,6 +354,7 @@ export function registerTools(server: McpServer): void {
       const renewable = (production.offshore_wind_mw ?? 0) + (production.onshore_wind_mw ?? 0) + (production.solar_mw ?? 0);
       return json({
         time_dk: String(r.Minutes1DK ?? "").replace("T", " ").slice(0, 16),
+        source: edsSource(meta),
         co2_g_per_kwh: num("CO2Emission"),
         production_mw: production,
         total_production_mw: round3(total),
@@ -361,6 +374,61 @@ export function registerTools(server: McpServer): void {
         // Verified against ProductionConsumptionSettlement, where production plus
         // exchange equals gross consumption to the decimal: the sign is import-positive.
         note: "Positive exchange is power flowing into Denmark (import); negative is export. Danish consumption is production plus net import, so it is higher than production alone whenever net import is positive.",
+      });
+    }),
+  );
+
+  // --- Looking forward ---
+
+  const topicNames = topics();
+  server.registerTool(
+    "get_projections",
+    {
+      title: "Projections to 2050",
+      description:
+        "The forward-looking counterpart to every other tool here. Those read what Energinet has measured or published, at most a day ahead; this reads the Danish Energy Agency's official projection of the Danish energy system year by year to 2050 (Analyseforudsætninger til Energinet): electricity demand by use (households, heat pumps, EVs and other transport, data centres, hydrogen), wind, solar and battery capacity, power plants, interconnectors, gas, district heating, fuel prices and CO2 allowance prices. " +
+        "They are planning assumptions, not measurements and not a market price forecast, so say which it is when you answer and cite the source each table carries. " +
+        "Call it with no arguments for the table of contents, then narrow with query (Danish words work best: varmepumper, elbiler, datacentre, solceller, havmøller, batterier) or topic.",
+      inputSchema: {
+        query: z.string().optional().describe("Words that must all appear in the table's headings, title or row labels, e.g. 'varmepumper', 'datacentre Østdanmark', 'solceller kapacitet'. Danish; accents optional."),
+        topic: z.enum(topicNames as [string, ...string[]]).optional().describe("One sheet of the dataset"),
+        table_id: z.string().optional().describe("An id such as af-026 from an earlier call, to fetch exactly that table"),
+        years: z.array(z.number().int().min(2000).max(2100)).optional().describe("Years to include. Default: the first year, every fifth year, and 2050."),
+        limit: z.number().int().min(1).max(20).default(6).describe("Maximum tables to return in full"),
+      },
+      annotations: { readOnlyHint: true, openWorldHint: false },
+    },
+    guard(async ({ query, topic, table_id, years, limit }) => {
+      const { source, tables } = projections();
+      const about = {
+        kind: "projection (planning assumptions), not measured data",
+        source: source.name,
+        published: source.published,
+        dataset_url: source.url,
+        page: source.page,
+        note: "This is the base scenario (grundforløb); its assumptions are set out in the summary note on the source page. Capacities marked 'primo år' are at the start of the year.",
+      };
+      if (table_id) {
+        const t = tables.find((x) => x.id === table_id.trim().toLowerCase());
+        if (!t) throw new ToolError(`No table ${table_id}. Call get_projections without arguments for the list of ids.`);
+        return json({ ...about, tables: [shapeTable(t, years)] });
+      }
+      if (!query && !topic) {
+        const contents = topicNames.map((name) => ({
+          topic: name,
+          tables: tables.filter((t) => t.topic === name).map((t) => ({ id: t.id, table: [...t.context, t.title].join(" > ") })),
+        }));
+        return json({ ...about, how: "Pick a table_id, or pass query/topic to get matching tables with their numbers.", contents });
+      }
+      const found = searchProjections(query, topic);
+      if (!found.length) {
+        return json({ ...about, tables: [], hint: `Nothing matched${query ? ` "${query}"` : ""}. Try one Danish word (varmepumper, elbiler, solceller, datacentre, batterier), or call without arguments for the table of contents.` });
+      }
+      return json({
+        ...about,
+        matched: found.length,
+        tables: found.slice(0, limit).map((t) => shapeTable(t, years)),
+        ...(found.length > limit ? { more: found.slice(limit).map((t) => ({ id: t.id, table: [...t.context, t.title].join(" > ") })) } : {}),
       });
     }),
   );

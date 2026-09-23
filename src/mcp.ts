@@ -19,6 +19,7 @@ export function createServer(): McpServer {
     {
       instructions: [
         "Read-only access to Energi Data Service, Energinet's open data platform for the Danish energy system: electricity prices, carbon intensity, consumption, production, grid capacity, balancing markets and gas. It has no write tools and needs no credentials.",
+        "Two directions of time, two sources. Every tool except get_projections looks back, or at most a day ahead, at data Energinet has measured or published. get_projections looks forward to 2050 with the Danish Energy Agency's planning assumptions. Never blend the two without saying which number came from where, and cite the `source` each result carries.",
         "Column names differ per dataset and cannot be guessed. Call describe_dataset before query_dataset, and use the `time_column` it reports when reasoning about the period; `start` and `end` filter on that column only.",
         "Times are Danish local time unless a column name says UTC. Relative expressions work: now, StartOfDay, StartOfMonth, StartOfYear, with ISO 8601 offsets such as now-P1D or now-PT15M.",
         "22 of the 100 datasets are discontinued and still answer with old rows. If a tool warns that a dataset is discontinued, say so and use the replacement it names rather than presenting stale numbers as current.",

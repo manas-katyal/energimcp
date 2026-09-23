@@ -89,7 +89,7 @@ beforeEach(() => {
 test("the server advertises the tools it documents", async () => {
   const { client, close } = await connect();
   const names = (await client.listTools()).tools.map((t) => t.name).sort();
-  assert.deepEqual(names, ["describe_dataset", "download_url", "get_carbon_intensity", "get_electricity_prices", "get_power_system_now", "list_datasets", "query_dataset"]);
+  assert.deepEqual(names, ["describe_dataset", "download_url", "get_carbon_intensity", "get_electricity_prices", "get_power_system_now", "get_projections", "list_datasets", "query_dataset"]);
   const prompts = (await client.listPrompts()).prompts.map((p) => p.name).sort();
   assert.deepEqual(prompts, ["find-dataset", "grid-snapshot", "when-to-run"]);
   await close();
@@ -215,4 +215,45 @@ test("exchange is reported import-positive, the way the energy balance actually 
   assert.match(data.note, /into Denmark \(import\)/);
   assert.equal(data.total_production_mw, 1560);
   assert.equal(data.wind_and_solar_share_pct, round3((400 / 1560) * 100));
+});
+
+test("get_projections without arguments lists every table and names its source", async () => {
+  const { data } = await call("get_projections");
+  assert.match(data.source, /Energistyrelsen/);
+  assert.match(data.kind, /not measured/);
+  const ids = data.contents.flatMap((c: { tables: { id: string }[] }) => c.tables.map((t) => t.id));
+  assert.ok(ids.length > 50);
+  assert.ok(data.contents.some((c: { topic: string }) => c.topic === "Solceller"));
+  assert.equal(requested.length, 0, "the projection is a local snapshot; nothing is fetched");
+});
+
+test("get_projections finds tables by Danish words with or without accents, and cites each one", async () => {
+  const withAccent = await call("get_projections", { query: "datacentre Østdanmark" });
+  const without = await call("get_projections", { query: "datacentre ostdanmark" });
+  assert.ok(withAccent.data.matched > 0);
+  assert.equal(withAccent.data.matched, without.data.matched);
+  const t = withAccent.data.tables[0];
+  assert.match(t.table, /Datacentre/);
+  assert.match(t.source, /Energistyrelsen.*sheet "Elforbrug"/);
+  assert.ok(t.years.includes(2030) && t.years.includes(2050), "default years are every fifth plus the last");
+  assert.ok(!t.years.includes(2031));
+});
+
+test("get_projections returns exactly the years asked for", async () => {
+  const { data } = await call("get_projections", { query: "solceller kapaciteter", years: [2026, 2031] });
+  assert.deepEqual(data.tables[0].years, [2026, 2031]);
+  assert.deepEqual(Object.keys(data.tables[0].rows[0].values), ["2026", "2031"]);
+});
+
+test("get_projections says so when nothing matches, and rejects an unknown table id", async () => {
+  const none = await call("get_projections", { query: "zeppelin" });
+  assert.equal(none.data.tables.length, 0);
+  assert.match(none.data.hint, /Danish word/);
+  const bad = await call("get_projections", { table_id: "af-999" });
+  assert.equal(bad.isError, true);
+});
+
+test("results from Energi Data Service carry their source too", async () => {
+  const { data } = await call("get_electricity_prices", { price_areas: ["DK1"], include_periods: false });
+  assert.match(data.source, /Energinet, Energi Data Service, dataset DayAheadPrices/);
 });

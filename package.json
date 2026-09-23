@@ -39,6 +39,7 @@
     "test": "node --test test/*.test.ts",
     "typecheck": "tsc --noEmit",
     "catalog": "node scripts/catalog.ts",
+    "projections": "node scripts/projections.ts",
     "local": "node bin/energimcp.js",
     "build": "rm -rf dist/lib && tsc -p tsconfig.build.json && cp -R data dist/data",
     "prepublishOnly": "npm run build && npm test"
@@ -51,6 +52,7 @@
   "devDependencies": {
     "@types/express": "^5.0.0",
     "@types/node": "^24.0.0",
+    "exceljs": "^4.4.0",
     "typescript": "^5.8.0"
   },
   "bin": {

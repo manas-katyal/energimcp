@@ -50,6 +50,9 @@ npm run datasets  # the catalogue, one line per dataset
 | `get_electricity_prices` | Day-ahead prices in 15-minute resolution with the cheapest and dearest periods worked out. |
 | `get_carbon_intensity` | g CO₂/kWh in 5-minute resolution, with the forecast and the greenest upcoming window. |
 | `get_power_system_now` | One-minute snapshot: production by source, wind and solar share, carbon intensity, every interconnector. |
+| `get_projections` | Looks forward instead of back: the Danish Energy Agency's official projection to 2050 (Analyseforudsætninger til Energinet) — demand by use including heat pumps, EVs and data centres, wind, solar and battery capacity, fuel and CO₂ prices. Planning assumptions, not measurements. |
+
+Every result names its source: Energinet's Energi Data Service dataset for the tools that look back, or the Energy Agency's table for projections, so an answer never blends the two without saying so.
 
 Three prompts ship with it: `when-to-run`, `find-dataset` and `grid-snapshot`.
 
@@ -66,6 +69,10 @@ Four things about Energi Data Service shaped the implementation, and all four ar
 **Errors are plain text.** `404 dataset not found X`, `400 Invalid column X` — and `/meta/dataset/{unknown}` answers `204` with an empty body rather than 404. A 400 is enriched with the dataset's actual column list, since the model cannot guess them.
 
 One correctness note worth stating: in `PowerSystemRightNow`, **positive exchange values are imports into Denmark**, not exports. The metadata does not say so. It is verifiable in `ProductionConsumptionSettlement`, where production plus exchange equals gross consumption exactly.
+
+## Refreshing the projections
+
+The Energy Agency publishes the dataset as an Excel workbook, not an API, and updates it about once a year. `npm run projections` downloads it and rewrites `data/projections.json`; pass a path to read a local copy instead. The script reads the heading levels from the workbook's fonts, so check the table list it prints after a new edition.
 
 ## Hosting it
 
