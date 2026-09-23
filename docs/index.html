@@ -32,12 +32,16 @@
     --t-stagger: 80ms;
     --digit-dur: 500ms; --digit-distance: 8px; --digit-stagger: 70ms; --digit-blur: 2px;
     --digit-ease: cubic-bezier(0.34, 1.45, 0.64, 1); --digit-dir-x: 0; --digit-dir-y: 1;
+    /* card-resize + panel-reveal, composed by the accordion below */
+    --resize-dur: 300ms; --resize-ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --panel-open-dur: 400ms; --panel-close-dur: 350ms; --panel-translate-y: 12px;
+    --panel-blur: 2px; --panel-ease: cubic-bezier(0.22, 1, 0.36, 1);
     --border: #e8e8ea; --border-strong: #d4d4d8; --radius: 10px;
     --panel: #f4f4f5;
     /* Colour is an encoding, not decoration: low, high, and a live indicator. */
     --low: #0f7b4f; --high: #c1352a; --live: #0f7b4f; --accent: #c1352a; --ok: #0f7b4f;
   }
-  html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+  html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; interpolate-size: allow-keywords; }
   body { font-family: 'IBM Plex Sans', -apple-system, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.6; }
   .container { max-width: 880px; margin: 0 auto; padding: 0 1.5rem; }
   @media (min-width: 768px) { .container { padding: 0 2rem; } }
@@ -235,6 +239,53 @@
     .bars { grid-template-columns: 6.5rem 1fr 4.5rem; }
   }
 
+  /* Bento: the catalogue as figures rather than a list of paragraphs. */
+  .bento { display: grid; grid-template-columns: 1fr; gap: 0.75rem; margin-top: 2.5rem; }
+  @media (min-width: 700px) { .bento { grid-template-columns: repeat(4, 1fr); } }
+  /* `.cell`, not `.tile`: the hero artifact already owns `.tile .l`, which is
+     uppercase — reusing it here silently shouted every caption. */
+  .cell { background: var(--panel); border-radius: 16px; padding: 1.5rem 1.4rem; display: flex; flex-direction: column; justify-content: flex-end; min-height: 10.5rem; }
+  .cell .fig { font-size: clamp(2.1rem, 4vw, 3.1rem); font-weight: 500; letter-spacing: -0.04em; line-height: 1; font-variant-numeric: tabular-nums; margin-bottom: 0.55rem; }
+  .cell .fig small { font-size: 0.4em; font-weight: 400; color: var(--dim); margin-left: 0.15em; }
+  .cell .cap { font-size: 0.85rem; color: var(--dim); line-height: 1.5; }
+  .cell .cap b { color: var(--ink); font-weight: 500; }
+  .cell code { font-size: 0.78rem; color: var(--ink); }
+  @media (min-width: 700px) { .cell.wide { grid-column: span 2; } }
+  .cell.solid { background: var(--ink); }
+  .cell.solid .fig, .cell.solid .cap b, .cell.solid code { color: #f5f5f7; }
+  .cell.solid .cap, .cell.solid .fig small { color: rgba(245,245,247,0.68); }
+
+  /* Accordion questions, so the section is scannable instead of a wall. */
+  .faq details { border-top: 1px solid var(--border); }
+  .faq details:last-of-type { border-bottom: 1px solid var(--border); }
+  .faq summary { list-style: none; cursor: pointer; padding: 1.15rem 2rem 1.15rem 0; position: relative; font-size: 0.95rem; font-weight: 500; letter-spacing: -0.01em; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: ""; position: absolute; right: 0.4rem; top: 50%; width: 9px; height: 9px; margin-top: -5px;
+    border-right: 1.5px solid var(--muted); border-bottom: 1.5px solid var(--muted); transform: rotate(45deg); transform-origin: center;
+    transition: transform 300ms var(--t-ease); }
+  .faq details[open] summary::after { transform: rotate(225deg); }
+  /* card-resize animates the disclosure height; panel-reveal carries the text
+     in behind it. Browsers without ::details-content simply open instantly. */
+  .faq details::details-content {
+    height: 0; overflow: hidden; content-visibility: hidden;
+    transition: height var(--resize-dur) var(--resize-ease),
+                content-visibility var(--resize-dur) allow-discrete;
+  }
+  .faq details[open]::details-content { height: auto; content-visibility: visible; }
+  .faq details p { padding: 0 2rem 1.25rem 0; margin-top: -0.25rem;
+    opacity: 0; transform: translateY(var(--panel-translate-y)); filter: blur(var(--panel-blur));
+    transition: opacity var(--panel-close-dur) var(--panel-ease),
+                transform var(--panel-close-dur) var(--panel-ease),
+                filter var(--panel-close-dur) var(--panel-ease); }
+  .faq details[open] p { opacity: 1; transform: translateY(0); filter: blur(0);
+    transition-duration: var(--panel-open-dur); }
+
+  /* Closing call to action. */
+  .closer { text-align: center; }
+  .closer h2 { margin: 0 auto 1rem; }
+  .closer .section-subtitle { margin: 0 auto 2rem; }
+  .closer .cta-row { justify-content: center; }
+
   .faq { margin-top: 2.5rem; max-width: 680px; }
   .faq .q { border-top: 1px solid var(--border); padding: 1.25rem 0; }
   .faq .q:last-child { border-bottom: 1px solid var(--border); }
@@ -257,6 +308,8 @@
     .t-reveal { opacity: 1 !important; transform: none !important; filter: none !important; transition: none !important; }
     .t-digit-group .t-digit { animation: none !important; }
     .chip { animation: none !important; }
+    .faq details::details-content, .faq details p, .faq summary::after { transition: none !important; }
+    .faq details p { opacity: 1 !important; transform: none !important; filter: none !important; }
     html { scroll-behavior: auto; }
   }
 </style>
@@ -438,13 +491,30 @@
     <div class="eyebrow">The catalogue</div>
     <h2>100 datasets, four publishers.</h2>
     <p class="section-subtitle">Everything Energinet publishes through <a href="https://www.energidataservice.dk/">Energi Data Service</a>: 71 transmission-level electricity datasets, 15 gas, 10 distribution-level consumption and production, and 4 from Gas Storage Denmark.</p>
-    <div class="t-reveal facts">
-      <div class="fact"><h3>One minute to twenty years</h3><p>From <code>PowerSystemRightNow</code> at one-minute resolution to hourly settlement data reaching back to 2005.</p></div>
-      <div class="fact"><h3>Schemas, not guesswork</h3><p><code>describe_dataset</code> hands the model every column with its type and unit, the time column that filtering works on, and the first and last timestamp that actually exist.</p></div>
-      <div class="fact"><h3>Stale data is flagged</h3><p>22 datasets are discontinued and still answer with old rows. The server says so and names the replacement instead of letting last year's prices pass as today's.</p></div>
-      <div class="fact"><h3>Rate limits respected</h3><p>The platform limits requests per dataset. Responses are cached for one update interval, so repeated questions are free and a limit is reported as something to wait out, not retry.</p></div>
-      <div class="fact"><h3>Summaries, not row dumps</h3><p>A year of five-minute data is 105,000 rows. Ask for a summary and get min, max, mean and sum per column instead.</p></div>
-      <div class="fact"><h3>Bulk stays out of the chat</h3><p><code>download_url</code> builds a CSV or Excel link for extracts too big to read aloud. Nothing is fetched to build it.</p></div>
+    <div class="t-reveal bento">
+      <div class="cell wide solid">
+        <div class="fig">100</div>
+        <div class="cap"><b>datasets</b>, every one Energinet publishes — 71 transmission electricity, 15 gas, 10 distribution, 4 gas storage.</div>
+      </div>
+      <div class="cell">
+        <div class="fig">1<small>min</small></div>
+        <div class="cap">Fastest resolution, on the live grid state.</div>
+      </div>
+      <div class="cell">
+        <div class="fig">2005</div>
+        <div class="cap">Earliest hourly settlement data.</div>
+      </div>
+      <div class="cell">
+        <div class="fig">0</div>
+        <div class="cap">Keys, accounts or forms. It is open data.</div>
+      </div>
+      <div class="cell">
+        <div class="fig">22</div>
+        <div class="cap">Discontinued datasets — <b>flagged, not hidden</b>, with their replacement named.</div>
+      </div>
+      <div class="cell wide">
+        <div class="cap"><b>Built for the model, not the dashboard.</b> <code>describe_dataset</code> hands over every column with its type and unit before a query is written; <code>summary</code> turns 105,000 rows into per-column statistics; <code>download_url</code> keeps bulk extracts out of the conversation entirely.</div>
+      </div>
     </div>
   </div>
 </section>
@@ -454,12 +524,12 @@
     <div class="eyebrow">Questions</div>
     <h2>Short answers.</h2>
     <div class="t-reveal faq">
-      <div class="q"><h3>Do I need an API key?</h3><p>No. Energi Data Service is open data and needs no registration, no key and no contract. That is the whole setup story.</p></div>
-      <div class="q"><h3>Which assistants work?</h3><p>Any MCP client — Claude, ChatGPT, Cursor, Mistral or a local model. It speaks standard MCP over stdio, and streamable HTTP when you host it.</p></div>
-      <div class="q"><h3>Is this official?</h3><p>No. It is an independent open-source client for a public API, not affiliated with Energinet or Energi Data Service.</p></div>
-      <div class="q"><h3>Are these the prices I pay?</h3><p>No. Day-ahead spot prices exclude grid tariffs, taxes and VAT, which roughly double a Danish household bill. The tariffs themselves are in <code>DatahubPricelist</code> if you want to compute the real thing.</p></div>
-      <div class="q"><h3>Why does it cache?</h3><p>Rate limits are per dataset and deliberately tight: the platform expects about one request per update interval. Caching is what lets an agent ask follow-up questions without being blocked.</p></div>
-      <div class="q"><h3>Can it write anything?</h3><p>No. Every tool is read-only, and the upstream API has no write endpoints.</p></div>
+      <details><summary>Do I need an API key?</summary><p>No. Energi Data Service is open data and needs no registration, no key and no contract. That is the whole setup story.</p></details>
+      <details><summary>Which assistants work?</summary><p>Any MCP client — Claude, ChatGPT, Cursor, Mistral or a local model. It speaks standard MCP over stdio, and streamable HTTP when you host it.</p></details>
+      <details><summary>Is this official?</summary><p>No. It is an independent open-source client for a public API, not affiliated with Energinet or Energi Data Service.</p></details>
+      <details><summary>Are these the prices I pay?</summary><p>No. Day-ahead spot prices exclude grid tariffs, taxes and VAT, which roughly double a Danish household bill. The tariffs themselves are in <code>DatahubPricelist</code> if you want to compute the real thing.</p></details>
+      <details><summary>Why does it cache?</summary><p>Rate limits are per dataset and deliberately tight: the platform expects about one request per update interval. Caching is what lets an agent ask follow-up questions without being blocked.</p></details>
+      <details><summary>Can it write anything?</summary><p>No. Every tool is read-only, and the upstream API has no write endpoints.</p></details>
     </div>
   </div>
 </section>
@@ -475,6 +545,18 @@
   </div>
 </section>
 </main>
+
+<section id="closer">
+  <div class="container closer t-reveal">
+    <div class="eyebrow pill">Open data, open source</div>
+    <h2>Ask the grid anything.</h2>
+    <p class="section-subtitle">One line in your MCP client and Denmark's entire energy record is a question away. No key, no account, no bill.</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="https://github.com/manas-katyal/energimcp">Get started &rarr;</a>
+      <a class="btn btn-secondary" href="https://github.com/manas-katyal/energimcp#tools">See the tools</a>
+    </div>
+  </div>
+</section>
 
 <footer>
   <div class="container">
