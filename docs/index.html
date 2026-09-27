@@ -83,6 +83,26 @@
   .nav .cta, .nav .cta:hover { background: var(--btn); color: var(--btn-ink); font-weight: 500; }
   @media (max-width: 760px) { .nav nav > a:not(.cta) { display: none; } }
 
+  /* Smart charging: the first onboarding step, handing off to charging.energimcp.dk/connect */
+  .charge { display: grid; grid-template-columns: 1.1fr 1fr; gap: 16px; }
+  @media (max-width: 860px) { .charge { grid-template-columns: 1fr; } }
+  .charge-card { background: var(--tile); border: 1px solid var(--line); border-radius: 22px; padding: clamp(22px, 3.5vw, 34px); }
+  .charge-card h3 { font-size: 19px; font-weight: 500; margin-bottom: 14px; }
+  .brands { list-style: none; }
+  .brands li { border-top: 1px solid var(--line); }
+  .brands li:last-child { border-bottom: 1px solid var(--line); }
+  .brands a { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 13px 2px; text-decoration: none; color: var(--ink); transition: padding 300ms var(--t-ease), color 300ms var(--t-ease); }
+  .brands a::after { content: "›"; color: var(--faint); font-size: 22px; line-height: 1; transition: translate 300ms var(--t-ease); }
+  .brands a:hover { padding-left: 8px; }
+  .brands a:hover::after { translate: 3px 0; color: var(--ink); }
+  .brands small { color: var(--faint); font-size: 13px; margin-left: auto; }
+  .charge-steps { list-style: none; counter-reset: s; display: grid; gap: 18px; margin-bottom: 26px; }
+  .charge-steps li { counter-increment: s; display: grid; grid-template-columns: 30px 1fr; gap: 12px; align-items: start; }
+  .charge-steps li::before { content: counter(s); width: 26px; height: 26px; border-radius: 8px; background: var(--alt); display: grid; place-items: center; font-size: 13px; font-weight: 500; font-variant-numeric: tabular-nums; }
+  .charge-steps b { font-weight: 500; display: block; }
+  .charge-steps span { color: var(--dim); font-size: 15px; }
+  @media (prefers-reduced-motion: reduce) { .brands a, .brands a::after { transition: none; } }
+
   /* Buttons */
   .btns { display: flex; gap: 14px; align-items: center; justify-content: center; flex-wrap: wrap; }
   .btn { display: inline-flex; align-items: center; justify-content: center; padding: 12px 22px; border-radius: 999px; font-size: 16px; font-weight: 500; transition: opacity 400ms var(--t-ease), border-color 400ms var(--t-ease), transform 400ms var(--t-ease); }
@@ -419,6 +439,7 @@
     <nav aria-label="Sections">
       <a href="#how">Sådan virker det</a>
       <a href="#reads">Data</a>
+      <a href="#charging">Opladning</a>
       <a href="#open">Åbenhed</a>
       <a href="#faq">Spørgsmål</a>
       <a class="t-toggle lang-toggle" role="switch" aria-checked="false" data-on="false" href="en.html" hreflang="en" aria-label="Sprog: dansk. Skift til engelsk"><span class="t-toggle-thumb" aria-hidden="true"></span><span class="lt" lang="da">DA</span><span class="lt" lang="en">EN</span></a>
@@ -539,6 +560,26 @@ DayAheadPriceDKK <span class="d">DKK/MWh</span>
             </tbody>
           </table>
           <p class="src">Kilde: Energistyrelsen, <a href="https://ens.dk/analyser-og-statistik/analyseforudsaetninger-til-energinet" target="_blank" rel="noopener">Analyseforudsætninger til Energinet 2025</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="charging">
+    <div class="wrap">
+      <div class="head">
+        <p class="eyebrow">Nyt · Smart opladning</p>
+        <h2>Lad bilen, når strømmen er billig og grøn.</h2>
+        <p>LadeMCP bruger de samme data til at styre din ladestander. Den vælger de billigste eller grønneste kvarterer, før bilen skal være klar, og sender planen direkte til laderen.</p>
+      </div>
+      <div class="charge">
+        <div class="charge-card">
+          <h3>Hvilken ladestander har du?</h3>
+          <ul class="brands"><li><a href="https://charging.energimcp.dk/connect?brand=zaptec">Zaptec Go / Pro</a></li><li><a href="https://charging.energimcp.dk/connect?brand=easee">Easee</a></li><li><a href="https://charging.energimcp.dk/connect?brand=wallbox">Wallbox Pulsar</a></li><li><a href="https://charging.energimcp.dk/connect?brand=zappi">myenergi zappi</a></li><li><a href="https://charging.energimcp.dk/connect?brand=other">Anden ladestander</a></li><li><a href="https://charging.energimcp.dk/connect?brand=clever">Clever<small>kan ikke endnu</small></a></li><li><a href="https://charging.energimcp.dk/connect?brand=tesla">Tesla Wall Connector<small>kan ikke endnu</small></a></li></ul>
+        </div>
+        <div class="charge-card">
+          <ol class="charge-steps"><li><div><b>Vælg din ladestander</b><span>Zaptec, Easee, Wallbox og zappi taler OCPP, en åben standard.</span></div></li><li><div><b>Skriv én adresse ind i dens app</b><span>Vi viser præcis hvor, trin for trin, og ser med, når den melder sig.</span></div></li><li><div><b>Den lader, når det er billigst</b><span>Hver gang bilen sættes i, lægges en ny plan på spotpriser og CO2-prognosen.</span></div></li></ol>
+          <a class="btn line" href="https://charging.energimcp.dk/">Se nattens plan</a>
         </div>
       </div>
     </div>
