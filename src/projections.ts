@@ -121,7 +121,10 @@ export function defaultYears(years: number[]): number[] {
 
 /** One table cut to the requested years, with its source spelled out so an answer can cite it. */
 export function shapeTable(t: ProjectionTable, years?: number[]) {
-  const wanted = (years?.length ? years : defaultYears(t.years)).filter((y) => t.years.includes(y));
+  const asked = years?.length ? [...new Set(years)].sort((a, b) => a - b) : defaultYears(t.years);
+  const wanted = asked.filter((y) => t.years.includes(y));
+  // Some tables skip years (2030, then every fifth); say so rather than return fewer years silently.
+  const missing = asked.filter((y) => !t.years.includes(y));
   const index = wanted.map((y) => t.years.indexOf(y));
   const { source } = projections();
   return {
@@ -135,6 +138,7 @@ export function shapeTable(t: ProjectionTable, years?: number[]) {
       ...(r.attributes ? r.attributes : {}),
       values: Object.fromEntries(index.map((k, n) => [wanted[n]!, r.values[k] ?? null])),
     })),
+    ...(missing.length ? { years_not_in_table: missing, years_available: t.years } : {}),
     ...(t.notes ? { notes: t.notes } : {}),
     source: `${source.name}, sheet "${t.topic}", table "${t.title}"${source.published ? `, published ${source.published}` : ""}`,
   };

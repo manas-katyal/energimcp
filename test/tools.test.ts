@@ -245,6 +245,17 @@ test("get_projections returns exactly the years asked for", async () => {
   assert.deepEqual(Object.keys(data.tables[0].rows[0].values), ["2026", "2031"]);
 });
 
+test("get_projections says which asked-for years a table does not have", async () => {
+  // af-089 jumps from 2030 to 2035, 2040, 2045, 2050.
+  const { data } = await call("get_projections", { table_id: "af-089", years: [2033, 2035, 2035, 2060] });
+  const t = data.tables[0];
+  assert.deepEqual(t.years, [2035]);
+  assert.deepEqual(t.years_not_in_table, [2033, 2060]);
+  assert.ok(t.years_available.includes(2030) && !t.years_available.includes(2033));
+  const full = await call("get_projections", { table_id: "af-089" });
+  assert.equal(full.data.tables[0].years_not_in_table, undefined);
+});
+
 test("get_projections says so when nothing matches, and rejects an unknown table id", async () => {
   const none = await call("get_projections", { query: "zeppelin" });
   assert.equal(none.data.tables.length, 0);
