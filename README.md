@@ -108,11 +108,13 @@ The same container runs anywhere — Fly, Render, a VPS. It is stateless, so sca
 src/eds.ts       API client: caching, request spacing, lenient JSON, typed errors
 src/catalog.ts   the 100 datasets: search, name resolution, retirement, successors
 src/data.ts      response shaping: dataset cards, freshness, per-column summaries
-src/tools.ts     the seven tools
+src/projections.ts  the Energy Agency's projection to 2050: search and table shaping
+src/tools.ts     the eight tools
 src/mcp.ts       server factory and the instructions the model reads first
 src/stdio.ts     local entry point
 src/server.ts    hosted entry point
 data/catalog.json  catalogue snapshot, so discovery works on a cold start
+data/projections.json  projection snapshot, from npm run projections
 docs/            the landing page (GitHub Pages)
 ```
 
