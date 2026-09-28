@@ -239,6 +239,16 @@ test("get_projections finds tables by Danish words with or without accents, and 
   assert.ok(!t.years.includes(2031));
 });
 
+test("get_projections cites each table so it can be told apart from others with the same title", async () => {
+  // af-011 (classic demand) and af-014 (heat pumps) are both titled "Elforbrug, Danmark (GWh)".
+  const heat = await call("get_projections", { table_id: "af-014" });
+  assert.match(heat.data.tables[0].source, /table "Individuelle varmepumper[^"]* > Elforbrug, Danmark \(GWh\)"/);
+  const { data } = await call("get_projections");
+  const ids: string[] = data.contents.flatMap((c: { tables: { id: string }[] }) => c.tables.map((t) => t.id));
+  const sources = await Promise.all(ids.map(async (id) => (await call("get_projections", { table_id: id })).data.tables[0].source));
+  assert.equal(new Set(sources).size, ids.length, "no two tables share a citation");
+});
+
 test("get_projections returns exactly the years asked for", async () => {
   const { data } = await call("get_projections", { query: "solceller kapaciteter", years: [2026, 2031] });
   assert.deepEqual(data.tables[0].years, [2026, 2031]);
