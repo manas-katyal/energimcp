@@ -83,8 +83,24 @@ const ALIASES: Record<string, string[]> = {
   capacity: ["kapacitet", "kapaciteter", "elkapacitet", "ydeevne"],
   kapacitet: ["kapacitet", "kapaciteter", "elkapacitet", "ydeevne"],
   production: ["produktion", "elproduktion"],
-  price: ["pris", "priser", "kvotepris", "brandselspriser"],
-  prices: ["pris", "priser", "kvotepris", "brandselspriser"],
+  price: ["pris", "priser", "kvotepris", "braendselspriser"],
+  prices: ["pris", "priser", "kvotepris", "braendselspriser"],
+  // The English terms the tool description promises.
+  electricity: ["elforbrug", "elproduktion", "elkapacitet"],
+  households: ["husholdninger"],
+  data: ["datacentre"],
+  centres: ["datacentre"],
+  centers: ["datacentre"],
+  datacenters: ["datacentre"],
+  interconnectors: ["udlandsforbindelser"],
+  interconnector: ["udlandsforbindelser"],
+  district: ["fjernvarme"],
+  heating: ["fjernvarme", "varmepumper"],
+  power: ["kraftvaerk"],
+  plants: ["kraftvaerk"],
+  fuel: ["braendselspriser"],
+  allowance: ["kvotepris"],
+  allowances: ["kvotepris"],
 };
 
 /**
