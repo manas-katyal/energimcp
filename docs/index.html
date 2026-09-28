@@ -96,6 +96,8 @@
   .brands a:hover { padding-left: 8px; }
   .brands a:hover::after { translate: 3px 0; color: var(--ink); }
   .brands small { color: var(--faint); font-size: 13px; margin-left: auto; }
+  /* Not supported yet: no brand key at /connect, so no link */
+  .brands .soon { display: flex; align-items: center; gap: 16px; padding: 13px 2px; color: var(--faint); }
   .charge-steps { list-style: none; counter-reset: s; display: grid; gap: 18px; margin-bottom: 26px; }
   .charge-steps li { counter-increment: s; display: grid; grid-template-columns: 30px 1fr; gap: 12px; align-items: start; }
   .charge-steps li::before { content: counter(s); width: 26px; height: 26px; border-radius: 8px; background: var(--alt); display: grid; place-items: center; font-size: 13px; font-weight: 500; font-variant-numeric: tabular-nums; }
@@ -575,7 +577,7 @@ DayAheadPriceDKK <span class="d">DKK/MWh</span>
       <div class="charge">
         <div class="charge-card">
           <h3>Hvilken ladestander har du?</h3>
-          <ul class="brands"><li><a href="https://charging.energimcp.dk/connect?brand=zaptec">Zaptec Go / Pro</a></li><li><a href="https://charging.energimcp.dk/connect?brand=easee">Easee</a></li><li><a href="https://charging.energimcp.dk/connect?brand=wallbox">Wallbox Pulsar</a></li><li><a href="https://charging.energimcp.dk/connect?brand=zappi">myenergi zappi</a></li><li><a href="https://charging.energimcp.dk/connect?brand=other">Anden ladestander</a></li><li><a href="https://charging.energimcp.dk/connect?brand=clever">Clever<small>kan ikke endnu</small></a></li><li><a href="https://charging.energimcp.dk/connect?brand=tesla">Tesla Wall Connector<small>kan ikke endnu</small></a></li></ul>
+          <ul class="brands"><li><a href="https://charging.energimcp.dk/connect?brand=zaptec">Zaptec Go / Pro</a></li><li><a href="https://charging.energimcp.dk/connect?brand=easee">Easee</a></li><li><a href="https://charging.energimcp.dk/connect?brand=wallbox">Wallbox Pulsar</a></li><li><a href="https://charging.energimcp.dk/connect?brand=zappi">myenergi zappi</a></li><li><a href="https://charging.energimcp.dk/connect?brand=other">Anden ladestander</a></li><li><span class="soon">Clever <small>kan ikke endnu</small></span></li><li><span class="soon">Tesla Wall Connector <small>kan ikke endnu</small></span></li></ul>
         </div>
         <div class="charge-card">
           <ol class="charge-steps"><li><div><b>Vælg din ladestander</b><span>Zaptec, Easee, Wallbox og zappi taler OCPP, en åben standard.</span></div></li><li><div><b>Skriv én adresse ind i dens app</b><span>Vi viser præcis hvor, trin for trin, og ser med, når den melder sig.</span></div></li><li><div><b>Den lader, når det er billigst</b><span>Hver gang bilen sættes i, lægges en ny plan på spotpriser og CO2-prognosen.</span></div></li></ol>
