@@ -83,7 +83,7 @@
   .nav .cta, .nav .cta:hover { background: var(--btn); color: var(--btn-ink); font-weight: 500; }
   @media (max-width: 760px) { .nav nav > a:not(.cta) { display: none; } }
 
-  /* Smart charging: the first onboarding step, handing off to charging.energimcp.dk/connect */
+  /* Smart charging: what LadeMCP works with, and how to run your own */
   .charge { display: grid; grid-template-columns: 1.1fr 1fr; gap: 16px; }
   @media (max-width: 860px) { .charge { grid-template-columns: 1fr; } }
   .charge-card { background: var(--tile); border: 1px solid var(--line); border-radius: 22px; padding: clamp(22px, 3.5vw, 34px); }
@@ -97,6 +97,8 @@
   .brands a:hover::after { translate: 3px 0; color: var(--ink); }
   .brands small { color: var(--faint); font-size: 13px; margin-left: auto; }
   /* Not supported yet: no brand key at /connect, so no link */
+  .brands li > span:not(.soon) { display: block; padding: 13px 2px; color: var(--ink); }
+  .charge-card .btn + .btn { margin-left: 8px; }
   .brands .soon { display: flex; align-items: center; gap: 16px; padding: 13px 2px; color: var(--faint); }
   .charge-steps { list-style: none; counter-reset: s; display: grid; gap: 18px; margin-bottom: 26px; }
   .charge-steps li { counter-increment: s; display: grid; grid-template-columns: 30px 1fr; gap: 12px; align-items: start; }
@@ -572,16 +574,16 @@ DayAheadPriceDKK <span class="d">DKK/MWh</span>
       <div class="head">
         <p class="eyebrow">New · Smart charging</p>
         <h2>Charge the car when power is cheap and green.</h2>
-        <p>LadeMCP uses the same data to run your charger. It picks the cheapest or greenest quarter-hours before the car has to be ready, and sends the plan straight to the charger.</p>
+        <p>LadeMCP uses the same data to run your charger. It picks the cheapest or greenest quarter-hours before the car has to be ready, and starts and stops the charger for you. You run your own, so your charger and your keys stay with you.</p>
       </div>
       <div class="charge">
         <div class="charge-card">
-          <h3>Which charger do you have?</h3>
-          <ul class="brands"><li><a href="https://charging.energimcp.dk/connect?brand=zaptec&amp;lang=en">Zaptec Go / Pro</a></li><li><a href="https://charging.energimcp.dk/connect?brand=easee&amp;lang=en">Easee</a></li><li><a href="https://charging.energimcp.dk/connect?brand=wallbox&amp;lang=en">Wallbox Pulsar</a></li><li><a href="https://charging.energimcp.dk/connect?brand=zappi&amp;lang=en">myenergi zappi</a></li><li><a href="https://charging.energimcp.dk/connect?brand=other&amp;lang=en">Another charger</a></li><li><span class="soon">Clever <small>not yet</small></span></li><li><span class="soon">Tesla Wall Connector <small>not yet</small></span></li></ul>
+          <h3>Works with</h3>
+          <ul class="brands"><li><span>Chargers in Monta</span></li><li><span>Zaptec Go / Pro</span></li><li><span>Easee</span></li><li><span>Wallbox Pulsar</span></li><li><span>myenergi zappi</span></li><li><span>EVBox Elvi</span></li><li><span>Others with OCPP 1.6J</span></li><li><span class="soon">Clever <small>cannot</small></span></li><li><span class="soon">Tesla Wall Connector <small>not yet</small></span></li><li><span class="soon">EVBox Livo <small>cannot</small></span></li></ul>
         </div>
         <div class="charge-card">
-          <ol class="charge-steps"><li><div><b>Pick your charger</b><span>Zaptec, Easee, Wallbox and zappi speak OCPP, an open standard.</span></div></li><li><div><b>Enter one address in its app</b><span>We show exactly where, step by step, and watch for it to check in.</span></div></li><li><div><b>It charges when power is cheapest</b><span>Every time the car is plugged in, a new plan is made on spot prices and the CO2 forecast.</span></div></li></ol>
-          <a class="btn line" href="https://charging.energimcp.dk/?lang=en">See tonight's plan</a>
+          <ol class="charge-steps"><li><div><b>Deploy your own</b><span>One click on Railway. The server makes its own passwords.</span></div></li><li><div><b>Open /setup and choose a password</b><span>The first person to open it becomes the owner, so do it right after deploying.</span></div></li><li><div><b>Connect the charger</b><span>Through Monta with an API key, or with one address in the charger's own app.</span></div></li><li><div><b>Add it to Claude</b><span>The same way as EnergiMCP. Then ask when the car charges, or tell it to stop or charge now.</span></div></li></ol>
+          <a class="btn" href="https://github.com/manas-katyal/lademcp#setup">Deploy on Railway</a> <a class="btn line" href="https://github.com/manas-katyal/lademcp">Code on GitHub</a>
         </div>
       </div>
     </div>
