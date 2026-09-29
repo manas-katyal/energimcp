@@ -83,6 +83,13 @@
   .nav .cta, .nav .cta:hover { background: var(--btn); color: var(--btn-ink); font-weight: 500; }
   @media (max-width: 760px) { .nav nav > a:not(.cta) { display: none; } }
 
+  /* EnergiMCP 2.0 announcement above the hero headline */
+  .announce { display: inline-flex; align-items: center; gap: 10px; margin-bottom: 22px; padding: 6px 14px 6px 8px; border-radius: 999px; background: var(--tile); box-shadow: 0 0 0 1px var(--line); font-size: 14px; color: var(--ink); text-decoration: none; transition: box-shadow 300ms var(--t-ease); }
+  .announce:hover { box-shadow: 0 0 0 1px var(--line-strong); text-decoration: none; }
+  .announce b { flex: none; white-space: nowrap; font-weight: 500; padding: 2px 9px; border-radius: 999px; background: linear-gradient(135deg, #ffd23f, #ff8c12 70%, #f96a0d); color: #fff; font-size: 13px; }
+  .announce span { color: var(--dim); }
+  @media (max-width: 480px) { .announce { font-size: 13px; text-align: left; max-width: 100%; } }
+  .announce::after { content: "›"; color: var(--faint); font-size: 18px; line-height: 1; }
   /* Smart charging: set up your own LadeMCP, and what it works with */
   .charge { display: grid; grid-template-columns: 1.25fr 1fr; gap: 16px; align-items: stretch; }
   @media (max-width: 860px) { .charge { grid-template-columns: 1fr; } }
@@ -460,6 +467,7 @@
 
 <main id="top">
   <div class="wrap hero t-stagger" id="hero">
+    <a class="announce t-stagger-line t-stagger-line--1" href="#charging"><b>EnergiMCP 2.0</b>Nu med intelligent opladning af din elbil</a>
     <h1 class="t-stagger-line t-stagger-line--2">Danmarks energidata.<br>Nu i din AI.</h1>
     <p class="lede t-stagger-line t-stagger-line--3">Spørg hvad strøm koster lige nu, hvor grønt elnettet er, eller hvad vinden lavede sidste januar.</p>
     <div class="btns t-stagger-line t-stagger-line--4">
@@ -577,9 +585,9 @@ DayAheadPriceDKK <span class="d">DKK/MWh</span>
   <section id="charging">
     <div class="wrap">
       <div class="head">
-        <p class="eyebrow">Nyt · Smart opladning</p>
+        <p class="eyebrow">EnergiMCP 2.0 · Intelligent opladning</p>
         <h2>Lad bilen, når strømmen er billig og grøn.</h2>
-        <p>LadeMCP bruger de samme data til at styre din ladestander. Den vælger de billigste eller grønneste kvarterer, før bilen skal være klar, og starter og stopper laderen for dig. Du kører din egen, så din lader og dine nøgler bliver hos dig.</p>
+        <p>EnergiMCP 2.0 styrer nu også din ladestander. Den vælger de billigste eller grønneste kvarterer, før bilen skal være klar, og starter og stopper laderen for dig. Opladningen kører på din egen server, LadeMCP, så din lader og dine nøgler bliver hos dig.</p>
       </div>
       <div class="charge">
         <div class="charge-card">

@@ -83,6 +83,13 @@
   .nav .cta, .nav .cta:hover { background: var(--btn); color: var(--btn-ink); font-weight: 500; }
   @media (max-width: 760px) { .nav nav > a:not(.cta) { display: none; } }
 
+  /* EnergiMCP 2.0 announcement above the hero headline */
+  .announce { display: inline-flex; align-items: center; gap: 10px; margin-bottom: 22px; padding: 6px 14px 6px 8px; border-radius: 999px; background: var(--tile); box-shadow: 0 0 0 1px var(--line); font-size: 14px; color: var(--ink); text-decoration: none; transition: box-shadow 300ms var(--t-ease); }
+  .announce:hover { box-shadow: 0 0 0 1px var(--line-strong); text-decoration: none; }
+  .announce b { flex: none; white-space: nowrap; font-weight: 500; padding: 2px 9px; border-radius: 999px; background: linear-gradient(135deg, #ffd23f, #ff8c12 70%, #f96a0d); color: #fff; font-size: 13px; }
+  .announce span { color: var(--dim); }
+  @media (max-width: 480px) { .announce { font-size: 13px; text-align: left; max-width: 100%; } }
+  .announce::after { content: "›"; color: var(--faint); font-size: 18px; line-height: 1; }
   /* Smart charging: set up your own LadeMCP, and what it works with */
   .charge { display: grid; grid-template-columns: 1.25fr 1fr; gap: 16px; align-items: stretch; }
   @media (max-width: 860px) { .charge { grid-template-columns: 1fr; } }
@@ -460,6 +467,7 @@
 
 <main id="top">
   <div class="wrap hero t-stagger" id="hero">
+    <a class="announce t-stagger-line t-stagger-line--1" href="#charging"><b>EnergiMCP 2.0</b>Now with intelligent charging for your car charger</a>
     <h1 class="t-stagger-line t-stagger-line--2">Denmark's energy data.<br>Now in your AI.</h1>
     <p class="lede t-stagger-line t-stagger-line--3">Ask what power costs right now, how green the grid is, or what the wind did last January.</p>
     <div class="btns t-stagger-line t-stagger-line--4">
@@ -577,9 +585,9 @@ DayAheadPriceDKK <span class="d">DKK/MWh</span>
   <section id="charging">
     <div class="wrap">
       <div class="head">
-        <p class="eyebrow">New · Smart charging</p>
+        <p class="eyebrow">EnergiMCP 2.0 · Intelligent charging</p>
         <h2>Charge the car when power is cheap and green.</h2>
-        <p>LadeMCP uses the same data to run your charger. It picks the cheapest or greenest quarter-hours before the car has to be ready, and starts and stops the charger for you. You run your own, so your charger and your keys stay with you.</p>
+        <p>EnergiMCP 2.0 now runs your charger too. It picks the cheapest or greenest quarter-hours before the car has to be ready, and starts and stops the charger for you. Charging runs on your own server, LadeMCP, so your charger and your keys stay with you.</p>
       </div>
       <div class="charge">
         <div class="charge-card">
