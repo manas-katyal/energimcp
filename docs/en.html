@@ -83,29 +83,34 @@
   .nav .cta, .nav .cta:hover { background: var(--btn); color: var(--btn-ink); font-weight: 500; }
   @media (max-width: 760px) { .nav nav > a:not(.cta) { display: none; } }
 
-  /* Smart charging: what LadeMCP works with, and how to run your own */
-  .charge { display: grid; grid-template-columns: 1.1fr 1fr; gap: 16px; }
+  /* Smart charging: set up your own LadeMCP, and what it works with */
+  .charge { display: grid; grid-template-columns: 1.25fr 1fr; gap: 16px; align-items: start; }
   @media (max-width: 860px) { .charge { grid-template-columns: 1fr; } }
   .charge-card { background: var(--tile); border: 1px solid var(--line); border-radius: 22px; padding: clamp(22px, 3.5vw, 34px); }
-  .charge-card h3 { font-size: 19px; font-weight: 500; margin-bottom: 14px; }
-  .brands { list-style: none; }
-  .brands li { border-top: 1px solid var(--line); }
-  .brands li:last-child { border-bottom: 1px solid var(--line); }
-  .brands a { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 13px 2px; text-decoration: none; color: var(--ink); transition: padding 300ms var(--t-ease), color 300ms var(--t-ease); }
-  .brands a::after { content: "›"; color: var(--faint); font-size: 22px; line-height: 1; transition: translate 300ms var(--t-ease); }
-  .brands a:hover { padding-left: 8px; }
-  .brands a:hover::after { translate: 3px 0; color: var(--ink); }
-  .brands small { color: var(--faint); font-size: 13px; margin-left: auto; }
-  /* Not supported yet: no brand key at /connect, so no link */
-  .brands li > span:not(.soon) { display: block; padding: 13px 2px; color: var(--ink); }
-  .charge-card .btn + .btn { margin-left: 8px; }
-  .brands .soon { display: flex; align-items: center; gap: 16px; padding: 13px 2px; color: var(--faint); }
-  .charge-steps { list-style: none; counter-reset: s; display: grid; gap: 18px; margin-bottom: 26px; }
-  .charge-steps li { counter-increment: s; display: grid; grid-template-columns: 30px 1fr; gap: 12px; align-items: start; }
-  .charge-steps li::before { content: counter(s); width: 26px; height: 26px; border-radius: 8px; background: var(--alt); display: grid; place-items: center; font-size: 13px; font-weight: 500; font-variant-numeric: tabular-nums; }
-  .charge-steps b { font-weight: 500; display: block; }
-  .charge-steps span { color: var(--dim); font-size: 15px; }
-  @media (prefers-reduced-motion: reduce) { .brands a, .brands a::after { transition: none; } }
+  .charge-card h3 { font-size: 19px; font-weight: 500; }
+  .setup-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 22px; }
+  .setup-top .pill { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; color: var(--ok); }
+  .setup-top .pill::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--ok); }
+  .setup-top small { color: var(--faint); font-size: 14px; }
+  .lsteps { list-style: none; counter-reset: s; }
+  .lsteps > li { counter-increment: s; position: relative; display: grid; grid-template-columns: 32px 1fr; gap: 16px; padding-bottom: 26px; }
+  .lsteps > li:last-child { padding-bottom: 0; }
+  .lsteps > li::before { content: counter(s); width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; font-size: 14px; font-weight: 500; font-variant-numeric: tabular-nums; background: var(--tile); box-shadow: inset 0 0 0 1.5px var(--line-strong); color: var(--ink); position: relative; z-index: 1; }
+  .lsteps > li:first-child::before { background: var(--btn); color: var(--btn-ink); box-shadow: none; }
+  .lsteps > li:not(:last-child)::after { content: ""; position: absolute; left: 15.25px; top: 34px; bottom: 2px; width: 1.5px; background: var(--line); }
+  .lsteps b { display: block; font-weight: 500; font-size: 17px; margin: 5px 0 3px; }
+  .lsteps p { color: var(--dim); font-size: 15px; line-height: 1.5; }
+  .lsteps .lact { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .lsteps code { font: 13px ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--alt); border-radius: 8px; padding: 6px 10px; color: var(--ink); }
+  .ltag { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 500; padding: 5px 11px; border-radius: 999px; box-shadow: inset 0 0 0 1px var(--line-strong); }
+  .setup-foot { margin-top: 26px; padding-top: 18px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; color: var(--faint); font-size: 14px; }
+  .setup-foot a { color: var(--ink); font-weight: 500; }
+  .lchips { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 18px; }
+  @media (max-width: 330px) { .lchips { grid-template-columns: 1fr; } }
+  .lchips li { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 11px 12px 11px 16px; border-radius: 999px; box-shadow: inset 0 0 0 1px var(--line); font-size: 15px; font-weight: 500; }
+  .lchips li::after { content: ""; flex: none; width: 18px; height: 18px; border-radius: 50%; background: var(--ok) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 6.2l2.3 2.3 4.7-5' fill='none' stroke='white' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 11px no-repeat; }
+  .lchips li.first { grid-column: 1 / -1; background: var(--alt); }
+  .lcannot { margin-top: 16px; color: var(--faint); font-size: 14px; line-height: 1.5; }
 
   /* Buttons */
   .btns { display: flex; gap: 14px; align-items: center; justify-content: center; flex-wrap: wrap; }
@@ -578,12 +583,19 @@ DayAheadPriceDKK <span class="d">DKK/MWh</span>
       </div>
       <div class="charge">
         <div class="charge-card">
-          <h3>Works with</h3>
-          <ul class="brands"><li><span>Chargers in Monta</span></li><li><span>Zaptec Go / Pro</span></li><li><span>Easee</span></li><li><span>Wallbox Pulsar</span></li><li><span>myenergi zappi</span></li><li><span>EVBox Elvi</span></li><li><span>Others with OCPP 1.6J</span></li><li><span class="soon">Clever <small>cannot</small></span></li><li><span class="soon">Tesla Wall Connector <small>not yet</small></span></li><li><span class="soon">EVBox Livo <small>cannot</small></span></li></ul>
+          <div class="setup-top"><span class="pill">Setup</span><small>about 5 minutes</small></div>
+          <ol class="lsteps">
+            <li><div><b>Deploy your own</b><p>One click on Railway. The server makes its own passwords.</p><div class="lact"><a class="btn primary" href="https://railway.com/deploy/3u6Sxq">Deploy on Railway</a></div></div></li>
+            <li><div><b>Make the server yours</b><p>Open your server's address with /setup and choose a password. The first person to open it becomes the owner, so do it right after deploying.</p><div class="lact"><code>https://…up.railway.app/setup</code></div></div></li>
+            <li><div><b>Connect the charger</b><p>Enter one address in the charger's own app, or connect through Monta with an API key. The page shows the steps for your charger.</p><div class="lact"><span class="ltag">OCPP</span><span class="ltag">Monta</span></div></div></li>
+            <li><div><b>Add it to Claude</b><p>The same way as EnergiMCP. Then ask when the car charges, or tell it to stop or charge now.</p></div></li>
+          </ol>
+          <div class="setup-foot"><span>Open source, MIT licence</span><a href="https://github.com/manas-katyal/lademcp">Code on GitHub ›</a></div>
         </div>
         <div class="charge-card">
-          <ol class="charge-steps"><li><div><b>Deploy your own</b><span>One click on Railway. The server makes its own passwords.</span></div></li><li><div><b>Open /setup and choose a password</b><span>The first person to open it becomes the owner, so do it right after deploying.</span></div></li><li><div><b>Connect the charger</b><span>Through Monta with an API key, or with one address in the charger's own app.</span></div></li><li><div><b>Add it to Claude</b><span>The same way as EnergiMCP. Then ask when the car charges, or tell it to stop or charge now.</span></div></li></ol>
-          <a class="btn" href="https://railway.com/deploy/3u6Sxq">Deploy on Railway</a> <a class="btn line" href="https://github.com/manas-katyal/lademcp">Code on GitHub</a>
+          <h3>Works with</h3>
+          <ul class="lchips"><li class="first">Any OCPP 1.6J charger</li><li>Monta</li><li>Zaptec</li><li>Easee</li><li>Wallbox</li><li>myenergi zappi</li><li>EVBox Elvi</li><li>Alfen</li><li>ABB Terra AC</li><li>Keba</li><li>Charge Amps</li></ul>
+          <p class="lcannot">Cannot connect: Clever, Tesla Wall Connector Gen 3 and EVBox Livo. They only talk to their maker's own platform.</p>
         </div>
       </div>
     </div>
