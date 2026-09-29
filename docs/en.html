@@ -96,6 +96,8 @@
   .brands a:hover { padding-left: 8px; }
   .brands a:hover::after { translate: 3px 0; color: var(--ink); }
   .brands small { color: var(--faint); font-size: 13px; margin-left: auto; }
+  /* Not supported yet: no brand key at /connect, so no link */
+  .brands .soon { display: flex; align-items: center; gap: 16px; padding: 13px 2px; color: var(--faint); }
   .charge-steps { list-style: none; counter-reset: s; display: grid; gap: 18px; margin-bottom: 26px; }
   .charge-steps li { counter-increment: s; display: grid; grid-template-columns: 30px 1fr; gap: 12px; align-items: start; }
   .charge-steps li::before { content: counter(s); width: 26px; height: 26px; border-radius: 8px; background: var(--alt); display: grid; place-items: center; font-size: 13px; font-weight: 500; font-variant-numeric: tabular-nums; }
@@ -575,7 +577,7 @@ DayAheadPriceDKK <span class="d">DKK/MWh</span>
       <div class="charge">
         <div class="charge-card">
           <h3>Which charger do you have?</h3>
-          <ul class="brands"><li><a href="https://charging.energimcp.dk/connect?brand=zaptec&amp;lang=en">Zaptec Go / Pro</a></li><li><a href="https://charging.energimcp.dk/connect?brand=easee&amp;lang=en">Easee</a></li><li><a href="https://charging.energimcp.dk/connect?brand=wallbox&amp;lang=en">Wallbox Pulsar</a></li><li><a href="https://charging.energimcp.dk/connect?brand=zappi&amp;lang=en">myenergi zappi</a></li><li><a href="https://charging.energimcp.dk/connect?brand=other&amp;lang=en">Another charger</a></li><li><a href="https://charging.energimcp.dk/connect?brand=clever&amp;lang=en">Clever<small>not yet</small></a></li><li><a href="https://charging.energimcp.dk/connect?brand=tesla&amp;lang=en">Tesla Wall Connector<small>not yet</small></a></li></ul>
+          <ul class="brands"><li><a href="https://charging.energimcp.dk/connect?brand=zaptec&amp;lang=en">Zaptec Go / Pro</a></li><li><a href="https://charging.energimcp.dk/connect?brand=easee&amp;lang=en">Easee</a></li><li><a href="https://charging.energimcp.dk/connect?brand=wallbox&amp;lang=en">Wallbox Pulsar</a></li><li><a href="https://charging.energimcp.dk/connect?brand=zappi&amp;lang=en">myenergi zappi</a></li><li><a href="https://charging.energimcp.dk/connect?brand=other&amp;lang=en">Another charger</a></li><li><span class="soon">Clever <small>not yet</small></span></li><li><span class="soon">Tesla Wall Connector <small>not yet</small></span></li></ul>
         </div>
         <div class="charge-card">
           <ol class="charge-steps"><li><div><b>Pick your charger</b><span>Zaptec, Easee, Wallbox and zappi speak OCPP, an open standard.</span></div></li><li><div><b>Enter one address in its app</b><span>We show exactly where, step by step, and watch for it to check in.</span></div></li><li><div><b>It charges when power is cheapest</b><span>Every time the car is plugged in, a new plan is made on spot prices and the CO2 forecast.</span></div></li></ol>
