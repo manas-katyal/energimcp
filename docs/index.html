@@ -83,7 +83,7 @@
   .nav .cta, .nav .cta:hover { background: var(--btn); color: var(--btn-ink); font-weight: 500; }
   @media (max-width: 760px) { .nav nav > a:not(.cta) { display: none; } }
 
-  /* Smart charging: the first onboarding step, handing off to charging.energimcp.dk/connect */
+  /* Smart charging: what LadeMCP works with, and how to run your own */
   .charge { display: grid; grid-template-columns: 1.1fr 1fr; gap: 16px; }
   @media (max-width: 860px) { .charge { grid-template-columns: 1fr; } }
   .charge-card { background: var(--tile); border: 1px solid var(--line); border-radius: 22px; padding: clamp(22px, 3.5vw, 34px); }
@@ -97,6 +97,8 @@
   .brands a:hover::after { translate: 3px 0; color: var(--ink); }
   .brands small { color: var(--faint); font-size: 13px; margin-left: auto; }
   /* Not supported yet: no brand key at /connect, so no link */
+  .brands li > span:not(.soon) { display: block; padding: 13px 2px; color: var(--ink); }
+  .charge-card .btn + .btn { margin-left: 8px; }
   .brands .soon { display: flex; align-items: center; gap: 16px; padding: 13px 2px; color: var(--faint); }
   .charge-steps { list-style: none; counter-reset: s; display: grid; gap: 18px; margin-bottom: 26px; }
   .charge-steps li { counter-increment: s; display: grid; grid-template-columns: 30px 1fr; gap: 12px; align-items: start; }
@@ -572,16 +574,16 @@ DayAheadPriceDKK <span class="d">DKK/MWh</span>
       <div class="head">
         <p class="eyebrow">Nyt · Smart opladning</p>
         <h2>Lad bilen, når strømmen er billig og grøn.</h2>
-        <p>LadeMCP bruger de samme data til at styre din ladestander. Den vælger de billigste eller grønneste kvarterer, før bilen skal være klar, og sender planen direkte til laderen.</p>
+        <p>LadeMCP bruger de samme data til at styre din ladestander. Den vælger de billigste eller grønneste kvarterer, før bilen skal være klar, og starter og stopper laderen for dig. Du kører din egen, så din lader og dine nøgler bliver hos dig.</p>
       </div>
       <div class="charge">
         <div class="charge-card">
-          <h3>Hvilken ladestander har du?</h3>
-          <ul class="brands"><li><a href="https://charging.energimcp.dk/connect?brand=zaptec">Zaptec Go / Pro</a></li><li><a href="https://charging.energimcp.dk/connect?brand=easee">Easee</a></li><li><a href="https://charging.energimcp.dk/connect?brand=wallbox">Wallbox Pulsar</a></li><li><a href="https://charging.energimcp.dk/connect?brand=zappi">myenergi zappi</a></li><li><a href="https://charging.energimcp.dk/connect?brand=other">Anden ladestander</a></li><li><span class="soon">Clever <small>kan ikke endnu</small></span></li><li><span class="soon">Tesla Wall Connector <small>kan ikke endnu</small></span></li></ul>
+          <h3>Virker med</h3>
+          <ul class="brands"><li><span>Ladere i Monta</span></li><li><span>Zaptec Go / Pro</span></li><li><span>Easee</span></li><li><span>Wallbox Pulsar</span></li><li><span>myenergi zappi</span></li><li><span>EVBox Elvi</span></li><li><span>Andre med OCPP 1.6J</span></li><li><span class="soon">Clever <small>kan ikke</small></span></li><li><span class="soon">Tesla Wall Connector <small>kan ikke endnu</small></span></li><li><span class="soon">EVBox Livo <small>kan ikke</small></span></li></ul>
         </div>
         <div class="charge-card">
-          <ol class="charge-steps"><li><div><b>Vælg din ladestander</b><span>Zaptec, Easee, Wallbox og zappi taler OCPP, en åben standard.</span></div></li><li><div><b>Skriv én adresse ind i dens app</b><span>Vi viser præcis hvor, trin for trin, og ser med, når den melder sig.</span></div></li><li><div><b>Den lader, når det er billigst</b><span>Hver gang bilen sættes i, lægges en ny plan på spotpriser og CO2-prognosen.</span></div></li></ol>
-          <a class="btn line" href="https://charging.energimcp.dk/">Se nattens plan</a>
+          <ol class="charge-steps"><li><div><b>Deploy din egen</b><span>Ét klik på Railway. Serveren laver selv sine adgangskoder.</span></div></li><li><div><b>Åbn /setup, og vælg en adgangskode</b><span>Den første, der åbner siden, bliver ejer, så gør det lige efter deploy.</span></div></li><li><div><b>Forbind laderen</b><span>Gennem Monta med en API-nøgle, eller med én adresse i laderens egen app.</span></div></li><li><div><b>Tilføj den til Claude</b><span>Samme sted som EnergiMCP. Så kan du spørge, hvornår bilen lader, og bede den stoppe eller lade nu.</span></div></li></ol>
+          <a class="btn" href="https://github.com/manas-katyal/lademcp#setup">Deploy på Railway</a> <a class="btn line" href="https://github.com/manas-katyal/lademcp">Koden på GitHub</a>
         </div>
       </div>
     </div>
