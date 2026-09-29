@@ -88,7 +88,10 @@
   .announce:hover { box-shadow: 0 0 0 1px var(--line-strong); text-decoration: none; }
   .announce b { flex: none; white-space: nowrap; font-weight: 500; padding: 2px 9px; border-radius: 999px; background: linear-gradient(135deg, #ffd23f, #ff8c12 70%, #f96a0d); color: #fff; font-size: 13px; }
   .announce span { color: var(--dim); }
-  @media (max-width: 480px) { .announce { font-size: 13px; text-align: left; max-width: 100%; } }
+  .announce .announce-text { color: inherit; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .announce .announce-text span { color: inherit; }
+  .announce .short { display: none; }
+  @media (max-width: 480px) { .announce { font-size: 13px; text-align: left; max-width: 100%; } .announce .long { display: none; } .announce .short { display: inline; } }
   .announce::after { content: "›"; color: var(--faint); font-size: 18px; line-height: 1; }
   /* Smart charging: set up your own LadeMCP, and what it works with */
   .charge { display: grid; grid-template-columns: 1.25fr 1fr; gap: 16px; align-items: stretch; }
@@ -467,7 +470,7 @@
 
 <main id="top">
   <div class="wrap hero t-stagger" id="hero">
-    <a class="announce t-stagger-line t-stagger-line--1" href="#charging"><b>EnergiMCP 2.0</b>Nu med intelligent opladning af din elbil</a>
+    <a class="announce t-stagger-line t-stagger-line--1" href="#charging"><b>EnergiMCP 2.0</b><span class="announce-text"><span class="long">Nu med intelligent opladning af din elbil</span><span class="short">Smart opladning af din elbil</span></span></a>
     <h1 class="t-stagger-line t-stagger-line--2">Danmarks energidata.<br>Nu i din AI.</h1>
     <p class="lede t-stagger-line t-stagger-line--3">Spørg hvad strøm koster lige nu, hvor grønt elnettet er, eller hvad vinden lavede sidste januar.</p>
     <div class="btns t-stagger-line t-stagger-line--4">
