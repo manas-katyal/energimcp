@@ -136,6 +136,8 @@ export function shapeTable(t: ProjectionTable, years?: number[]) {
       values: Object.fromEntries(index.map((k, n) => [wanted[n]!, r.values[k] ?? null])),
     })),
     ...(t.notes ? { notes: t.notes } : {}),
-    source: `${source.name}, sheet "${t.topic}", table "${t.title}"${source.published ? `, published ${source.published}` : ""}`,
+    // The full heading path: titles repeat within a sheet ("Elforbrug, Danmark (GWh)"
+    // is both classic demand and heat pumps), so the title alone cites the wrong table.
+    source: `${source.name}, sheet "${t.topic}", table "${[...t.context, t.title].join(" > ")}"${source.published ? `, published ${source.published}` : ""}`,
   };
 }
