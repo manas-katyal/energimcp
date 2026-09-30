@@ -266,6 +266,20 @@ test("get_projections says which asked-for years a table does not have", async (
   assert.equal(full.data.tables[0].years_not_in_table, undefined);
 });
 
+test("get_projections understands the English terms its description uses", async () => {
+  for (const [query, topic] of [
+    ["data centres", "Elforbrug"],
+    ["interconnectors", "Udlandsforbindelser"],
+    ["power plants", "Kraftværkskapaciteter"],
+    ["fuel prices", "Brændselspriser"],
+    ["CO2 allowance prices", "CO2-kvotepris"],
+  ]) {
+    const { data } = await call("get_projections", { query });
+    assert.ok(data.matched > 0, `${query} should match something`);
+    assert.match(data.tables[0].source, new RegExp(`sheet "${topic}"`), query);
+  }
+});
+
 test("get_projections says so when nothing matches, and rejects an unknown table id", async () => {
   const none = await call("get_projections", { query: "zeppelin" });
   assert.equal(none.data.tables.length, 0);
